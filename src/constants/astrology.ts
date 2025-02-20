@@ -11,9 +11,9 @@ export const planetSymbols: { [key: string]: string } = {
   'Pluto': '♇',
   'Ascendant': '↑',
   'Lilith': '⚸',
-  'Chiron': '⚷',
-  'Nodul Nord': '☊',
-  'Nodul Sud': '☋'
+  'Kiron': '⚷',
+  'North Node': '☊',
+  'South Node': '☋'
 };
 
 export const zodiacSymbols: { [key: string]: string } = {
@@ -59,7 +59,7 @@ export const planetOrder: string[] = [
   'Pluto',
   'Ascendant',
   'Lilith',
-  'Chiron',
-  'Nodul Nord',
-  'Nodul Sud'
+  'Kiron',
+  'North Node',
+  'South Node'
 ];

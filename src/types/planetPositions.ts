@@ -22,7 +22,7 @@ export interface PlanetPosition {
 }
 
 export interface ReadingResult {
-  dynamicTexts: PlanetPosition[];
+  data: PlanetPosition[];
 }
 
 export type { FormErrors, SelectOption };

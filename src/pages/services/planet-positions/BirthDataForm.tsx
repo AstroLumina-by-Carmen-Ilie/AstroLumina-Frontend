@@ -113,7 +113,6 @@ const BirthDataForm: React.FC<{
   ) => {
     startLoading();
     try {
-      console.log(language)
       const readingResult = await fetchReading('ro', payload);
       setResult(readingResult);
       setUserInfo({

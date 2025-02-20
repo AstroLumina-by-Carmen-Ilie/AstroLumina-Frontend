@@ -115,9 +115,9 @@ const MobileNavbar: React.FC<NavbarProps> = ({ lightTheme = false }) => {
         <div ref={navbarRef} className={mobileMenuClasses}>
           <div className="px-2 pt-2 pb-3 space-y-1">
             <NavbarLinks linkClasses={mobileLinkClasses} />
-            <div className="px-3 py-2">
+            {/* <div className="px-3 py-2">
               <NavbarLanguageSwitcher lightTheme={lightTheme} />
-            </div>
+            </div> */}
           </div>
         </div>
       </nav>

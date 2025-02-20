@@ -19,7 +19,7 @@ const DesktopNavbar: React.FC<NavbarProps> = ({ lightTheme = false }) => {
             
             <div className="ml-10 flex items-baseline space-x-4">
               <NavbarLinks linkClasses={linkClasses} />
-              <NavbarLanguageSwitcher lightTheme={lightTheme} />
+              {/* <NavbarLanguageSwitcher lightTheme={lightTheme} /> */}
             </div>
           </div>
         </div>
