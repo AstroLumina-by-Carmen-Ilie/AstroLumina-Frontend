@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ReadingPayload, UserInfo, ContactInfo, InterpretedReadingResult } from '../../../types/natalChart';
 import { calculateNatalChart } from '../utilities/astrologicalCalculations';
 import { generateNatalChartPDF } from '../../../templates/pdf/natalChart';
@@ -34,19 +34,23 @@ const FinalStep: React.FC<FinalStepProps> = ({ payload, userInfo, contactInfo, p
       setResult(null);
     } finally {
       // stopLoading();
-      setTimeout(() => setIsGettingData(false), 1000);
+      setTimeout(() => setIsGettingData(false), 1500);
     }
   };
 
+  useEffect(() => {
+    if (result && userInfo && contactInfo && paymentStatus) {
+      const generatePDF = async () => {
+        const doc = generateNatalChartPDF(result, userInfo, contactInfo);
+        await doc.save(`natal-chart-${userInfo.name.toLowerCase().replace(/\s+/g, '-')}.pdf`);
+      };
+      generatePDF();
+    }
+  }, [result, userInfo, contactInfo, paymentStatus]);
+
   const handleNatalChart = async () => {
     await handleFormSubmit();
-    if (!result || !userInfo || !contactInfo || !paymentStatus) return;
-
-    const doc = generateNatalChartPDF(
-      result!, userInfo, contactInfo
-    );
-    await doc.save(`natal-chart-${userInfo.name.toLowerCase().replace(/\s+/g, '-')}.pdf`);
-  }
+  };
 
   return (
     <div className="space-y-6 text-center">
