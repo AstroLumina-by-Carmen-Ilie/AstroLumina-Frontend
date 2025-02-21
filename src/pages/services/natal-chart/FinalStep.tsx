@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import jsPDF from 'jspdf';
 import { ReadingPayload, UserInfo, ContactInfo, InterpretedReadingResult } from '../../../types/natalChart';
 import { calculateNatalChart } from '../utilities/astrologicalCalculations';
-import { useLoading } from '../../../contexts/LoadingContext';
 import { generateNatalChartPDF } from '../../../templates/pdf/natalChart';
 
 interface FinalStepProps {
