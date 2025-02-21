@@ -10,16 +10,13 @@ export const generatePlanetPositionsPDF = (result: ReadingResult, userInfo: { na
     format: 'a4'
   });
 
-  // Adăugăm fonturile
   doc.addFont('/fonts/NotoSans-Regular.ttf', 'NotoSans', 'normal');
   doc.addFont('/fonts/NotoSansSymbols-Regular.ttf', 'NotoSansSymbols', 'normal');
-  
-  // Add header
+
   doc.setFont('NotoSans');
   doc.setFontSize(20);
   doc.text('Hartă Astrală', 105, 15, { align: 'center' });
-  
-  // Add user info
+
   doc.setFontSize(12);
   doc.text(`Nume: ${userInfo.name}`, 20, 30);
   doc.text(`Dată: ${userInfo.date}`, 20, 37);
@@ -27,8 +24,8 @@ export const generatePlanetPositionsPDF = (result: ReadingResult, userInfo: { na
   doc.text(`Locație: ${userInfo.location}`, 20, 51);
 
   const tableData = result.data.map(p => {
-    const planetSymbol = p.planet === 'Sun' ? 'O' : planetSymbols[p.planet] || '';
-    const zodiacSymbol = zodiacSymbols[p.sign] || '';
+    const planetSymbol = (p.planet === 'Soare' || p.planet === 'Sun') ? 'O' : planetSymbols['ro'][p.planet] || '';
+    const zodiacSymbol = zodiacSymbols['ro'][p.sign] || '';
     
     return [
       `${planetSymbol} ${p.planet}`,
@@ -65,7 +62,6 @@ export const generatePlanetPositionsPDF = (result: ReadingResult, userInfo: { na
     }
   });
 
-  // Add footer
   doc.setFont('NotoSans');
   const today = new Date().toLocaleDateString('ro-RO');
   doc.setFontSize(10);

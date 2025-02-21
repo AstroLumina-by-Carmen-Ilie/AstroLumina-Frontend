@@ -13,5 +13,16 @@ export interface ContactInfo {
     email: string;
 }
 
+export interface InterpretedPlanetPosition {
+    planet: string;
+    sign: string;
+    house: string;
+    interpretation: string;
+  }
+  
+export interface InterpretedReadingResult {
+data: InterpretedPlanetPosition[];
+}
+
 export type { FormErrors, SelectOption };
-export type { LocationCoordinates, ReadingPayload, PlanetPosition, ReadingResult };
+export type { LocationCoordinates, ReadingPayload, PlanetPosition, ReadingResult};

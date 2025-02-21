@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ReadingResult } from '../../../types/planetPositions';
-import { planetSymbols, planetOrder } from '../../../constants/astrology';
+import { planetSymbols } from '../../../constants/astrology';
 import { generatePlanetPositionsPDF } from '../../../templates/pdf/planetPositions';
 
 // Utility functions
@@ -66,11 +66,15 @@ const ResultsDisplay: React.FC<{
               {result.data.map((info, index) => (
                 <tr key={index} className="border-b border-amber-100">
                   <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">
-                    <span className="mr-2 font-semibold">{planetSymbols[info.planet] || ''}</span>
+                    <span className="mr-2 font-semibold">{planetSymbols['ro'][info.planet] || ''}</span>
                     {info.planet}
                   </td>
-                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">{info.sign}</td>
-                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">{info.house}</td>
+                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">
+                    {info.sign}
+                  </td>
+                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">
+                    {info.house}
+                  </td>
                 </tr>
               ))}
             </tbody>

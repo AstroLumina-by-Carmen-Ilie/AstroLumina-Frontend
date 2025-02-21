@@ -30,7 +30,6 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ onNext }) => {
       value: country.isoCode,
       label: country.name
     }));
-    // Set Romania as default
     const romania = countries.find(c => c.label === 'Romania');
     if (romania) {
       setBirthCountry(romania.value);
@@ -102,7 +101,6 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ onNext }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateInputs() && coordinates && birthDate && birthHour) {
-      // API payload with just the required fields
       const payload: ReadingPayload = {
         longitude: coordinates.lng,
         latitude: coordinates.lat,
@@ -113,7 +111,6 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ onNext }) => {
         minute: birthHour.getMinutes()
       };
       
-      // Get the actual location names for display
       const country = Country.getCountryByCode(birthCountry)?.name || birthCountry;
       const state = State.getStateByCodeAndCountry(birthCounty, birthCountry)?.name || birthCounty;
       const cities = City.getCitiesOfState(birthCountry, birthCounty);
