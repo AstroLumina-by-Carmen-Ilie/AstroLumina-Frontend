@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "concurrently \"npm run dev\" \"node src/lib/stripeServer.ts\""
+    "start": "npm run dev"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.1.1",

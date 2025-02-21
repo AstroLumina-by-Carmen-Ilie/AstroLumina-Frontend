@@ -4,8 +4,7 @@ import { Country, State, City } from 'country-state-city';
 import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/themes/material_blue.css';
 import { FormErrors, LocationCoordinates, ReadingPayload, ReadingResult, SelectOption } from '../../../types/planetPositions';
-import { useLoading } from '../../../contexts/LoadingContext';
-import { fetchReading } from '../utilities/astrologicalCalculations';
+import { calculatePlanetPositions } from '../utilities/astrologicalCalculations';
 
 const BirthDataForm: React.FC<{ 
   setResult: React.Dispatch<React.SetStateAction<ReadingResult | null>>; 
@@ -31,7 +30,7 @@ const BirthDataForm: React.FC<{
 
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const { startLoading, stopLoading } = useLoading();
+  const [isCalculating, setIsCalculating] = useState(false);
   
   useEffect(() => {
     const countries = Country.getAllCountries().map(country => ({
@@ -107,42 +106,21 @@ const BirthDataForm: React.FC<{
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleFormSubmit = async (
-    payload: ReadingPayload,
-    displayData: { name: string; location: string }
-  ) => {
-    startLoading();
-    try {
-      console.log(language)
-      const readingResult = await fetchReading('ro', payload);
-      setResult(readingResult);
-      setUserInfo({
-        name: displayData.name,
-        birthDate: new Date(payload.year, payload.month - 1, payload.day),
-        birthHour: new Date(payload.year, payload.month - 1, payload.day, payload.hour, payload.minute),
-        location: displayData.location
-      });
-    } catch (error) {
-      console.error('Error fetching reading:', error);
-      setResult(null);
-      setUserInfo(null);
-    } finally {
-      stopLoading();
-    }
-  };
+  const handleCalculatePositions = async () => {
+    const isValid = validateInputs();
+    if (!isValid) return;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateInputs() && coordinates && birthDate && birthHour) {
-      // API payload with just the required fields
+    setIsCalculating(true);
+    // startLoading();
+    try {
       const payload: ReadingPayload = {
-        longitude: coordinates.lng,
-        latitude: coordinates.lat,
-        year: birthDate.getFullYear(),
-        month: birthDate.getMonth() + 1,
-        day: birthDate.getDate(),
-        hour: birthHour.getHours(),
-        minute: birthHour.getMinutes()
+        longitude: coordinates!.lng,
+        latitude: coordinates!.lat,
+        year: birthDate!.getFullYear(),
+        month: birthDate!.getMonth() + 1,
+        day: birthDate!.getDate(),
+        hour: birthHour!.getHours(),
+        minute: birthHour!.getMinutes()
       };
       
       // Get the actual location names for display
@@ -152,18 +130,22 @@ const BirthDataForm: React.FC<{
       const city = cities.find(c => c.name === birthCity)?.name || birthCity;
       
       // Pass both the API payload and display data separately
-      handleFormSubmit(
-        payload,
-        {
-          name: fullName,
-          location: `${city}, ${state}, ${country}`
-        }
-      );
+      const result = await calculatePlanetPositions('ro', payload);
+      setResult(result);
+      setUserInfo({
+        name: fullName,
+        birthDate: birthDate!,
+        birthHour: birthHour!,
+        location: `${city}, ${state}, ${country}`
+      });
+    } finally {
+      // stopLoading();
+      setIsCalculating(false);
     }
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+    <form className="space-y-6">
       <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="fullName">Full Name</label>
         <input
@@ -309,10 +291,43 @@ const BirthDataForm: React.FC<{
       </div>
 
       <button
-        className="w-full p-4 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors font-semibold" 
-        type="submit"
+        onClick={handleCalculatePositions}
+        className="calculate-positions-btn hover:bg-amber-300 transition-colors duration-300 w-full"
+        style={{
+          marginTop: '20px',
+          padding: '12px 20px',
+          backgroundColor: '#FFD700',
+          color: '#1a1a1a',
+          border: '1px solid #FFD700',
+          borderRadius: '4px',
+          cursor: isCalculating ? 'not-allowed' : 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          fontWeight: '500',
+          boxShadow: '0 2px 4px rgba(255, 215, 0, 0.3)',
+          opacity: isCalculating ? 0.7 : 1
+        }}
+        disabled={isCalculating}
       >
-        Calculate Positions
+        {isCalculating ? (
+          <>
+            <svg 
+              className="animate-spin"
+              width="16" 
+              height="16" 
+              viewBox="0 0 16 16" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="2" strokeDasharray="22" strokeDashoffset="0"/>
+            </svg>
+            Calculating...
+          </>
+        ) : (
+          "Calculate Positions"
+        )}
       </button>
     </form>
   );

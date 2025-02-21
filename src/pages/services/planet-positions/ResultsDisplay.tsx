@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ReadingResult } from '../../../types/planetPositions';
-import { planetSymbols, planetOrder } from '../../../constants/astrology';
-import { calculateSouthNode } from '../utilities/astrologicalCalculations';
+import { planetSymbols } from '../../../constants/astrology';
 import { generatePlanetPositionsPDF } from '../../../templates/pdf/planetPositions';
 
 // Utility functions
@@ -22,22 +21,6 @@ const ResultsDisplay: React.FC<{
     location: string;
   };
 }> = ({ result, userInfo }) => {
-  const northNode = result.dynamicTexts.find(p => p.planet === 'Nodul Nord');
-  const southNode = northNode ? calculateSouthNode(northNode.sign, northNode.house) : null;
-
-  // Sort planets according to the defined order
-  const sortedPlanets = [...result.dynamicTexts].sort((a, b) => {
-    const indexA = planetOrder.indexOf(a.planet);
-    const indexB = planetOrder.indexOf(b.planet);
-    // If both planets are not in the order list, maintain original order
-    if (indexA === -1 && indexB === -1) return 0;
-    // If one planet is not in the list, put it at the end
-    if (indexA === -1) return 1;
-    if (indexB === -1) return -1;
-    // Otherwise sort by the defined order
-    return indexA - indexB;
-  });
-  
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const handleDownloadPDF = async () => {
@@ -80,30 +63,20 @@ const ResultsDisplay: React.FC<{
               </tr>
             </thead>
             <tbody>
-              {sortedPlanets.map((position, index) => (
+              {result.data.map((info, index) => (
                 <tr key={index} className="border-b border-amber-100">
                   <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">
-                    <span className="mr-2 font-semibold">{planetSymbols[position.planet] || ''}</span>
-                    {position.planet}
+                    <span className="mr-2 font-semibold">{planetSymbols['ro'][info.planet] || ''}</span>
+                    {info.planet}
                   </td>
-                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">{position.sign}</td>
-                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">{position.house}</td>
+                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">
+                    {info.sign}
+                  </td>
+                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">
+                    {info.house}
+                  </td>
                 </tr>
               ))}
-              {sortedPlanets.some(item => item.planet === 'Nodul Nord') && (
-                <tr className="border-b border-amber-100">
-                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">
-                    <span className="mr-2 font-semibold">{planetSymbols['Nodul Sud']}</span>
-                    Nodul Sud
-                  </td>
-                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">
-                    {southNode?.sign ?? 'Unknown Sign'}
-                  </td>
-                  <td className="p-2 sm:p-3 text-amber-700 text-sm sm:text-base whitespace-normal">
-                    {southNode?.house ?? 'Unknown House'}
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>

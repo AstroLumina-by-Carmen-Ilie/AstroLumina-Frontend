@@ -1,5 +1,5 @@
 import { FormErrors, SelectOption } from './common';
-import { LocationCoordinates, ReadingPayload, ReadingResult } from './planetPositions';
+import { LocationCoordinates, ReadingPayload, PlanetPosition, ReadingResult } from './planetPositions';
 
 export interface UserInfo {
     name: string;
@@ -13,5 +13,16 @@ export interface ContactInfo {
     email: string;
 }
 
+export interface InterpretedPlanetPosition {
+    planet: string;
+    sign: string;
+    house: string;
+    interpretation: string;
+  }
+  
+export interface InterpretedReadingResult {
+data: InterpretedPlanetPosition[];
+}
+
 export type { FormErrors, SelectOption };
-export type { LocationCoordinates, ReadingPayload, ReadingResult };
+export type { LocationCoordinates, ReadingPayload, PlanetPosition, ReadingResult};

@@ -5,9 +5,9 @@ import {
   EmbeddedCheckout
 } from '@stripe/react-stripe-js';
 
-const stripePromise = loadStripe("pk_test_51QsKuwI8IlTXEO0JOLZuYyz0e1Lmfk9fqDqX7hlUeVmsbYvbJhJrR2zEfY7pT32FSNNPnPTH4guXhZrGFu8ZHIiK00rLxK0Xec");
-
-const STRIPE_URL = 'http://localhost:4242';
+const STRIPE_URL = import.meta.env.VITE_STRIPE_URL
+const STRIPE_PK = import.meta.env.VITE_STRIPE_PK
+const stripePromise = loadStripe(STRIPE_PK);
 
 interface PaymentFormProps {
   onNext: (paymentStatus: boolean) => void;
@@ -19,7 +19,7 @@ const CheckoutForm: React.FC<{
   const handleComplete = () => setIsComplete(true);
 
   const fetchClientSecret = useCallback(() => {
-    return fetch(`${STRIPE_URL}/create-checkout-session`, {
+    return fetch(`${STRIPE_URL}/create-session-natal-chart`, {
       method: "POST",
     })
       .then((res) => res.json())
