@@ -51,6 +51,12 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onNext, onBack }) => {
     onNext(isComplete);
   };
 
+  const Tooltip = ({ message }: { message: string }) => (
+    <div className="absolute -top-8 w-full text-center px-3 py-2 bg-red-100 text-red-700 text-sm rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+      {message}
+    </div>
+  );
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -61,16 +67,26 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onNext, onBack }) => {
           <button
             type="button"
             onClick={onBack}
-            className="w-1/2 bg-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-400 transition-colors"
+            className="flex-1 bg-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-400 transition-colors"
           >
             Back
           </button>
-          <button
-            type="submit"
-            className="w-1/2 bg-amber-500 text-white py-3 px-6 rounded-lg hover:bg-amber-600 transition-colors"
-          >
-            Complete Payment
-          </button>
+          <div className="flex-1 relative">
+            <button
+              type="submit"
+              disabled={!isComplete}
+              className={`group w-full bg-amber-500 text-white py-3 px-6 rounded-lg transition-colors ${
+                !isComplete
+                  ? 'opacity-70 cursor-not-allowed'
+                  : 'hover:bg-amber-600 cursor-pointer'
+              }`}
+            >
+              Complete Payment
+              {!isComplete && (
+                <Tooltip message="Plata este obligatorie pentru a putea continua" />
+              )}
+            </button>
+          </div>
         </div>
       </form>
     </div>

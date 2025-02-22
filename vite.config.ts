@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  base: '/',
   plugins: [react()],
   server: {
     port: 5173,
@@ -9,7 +10,7 @@ export default defineConfig({
     historyApiFallback: true,
   },
   build: {
-    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14', 'ios12'],
     rollupOptions: {
       output: {
         manualChunks: {
