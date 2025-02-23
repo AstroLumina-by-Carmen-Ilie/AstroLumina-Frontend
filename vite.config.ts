@@ -10,7 +10,9 @@ export default defineConfig({
     historyApiFallback: true,
   },
   build: {
-    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14', 'ios12'],
+    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14', 
+      'ios12', 'ios13', 'ios14', 'ios15', 'ios16', 'ios17', 'ios18'
+    ],
     rollupOptions: {
       output: {
         manualChunks: {
