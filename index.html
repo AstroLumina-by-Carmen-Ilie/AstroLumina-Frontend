@@ -26,18 +26,23 @@
           });
           localStorage.setItem('early_errors', JSON.stringify(errors.slice(-20)));
           
-          // Show error UI
-          var div = document.createElement('div');
-          div.style.cssText = 'position:fixed;top:0;left:0;right:0;background:white;padding:20px;z-index:9999;';
-          div.innerHTML = '<h2 style="color:red">Loading Error</h2>' +
-                         '<p>The app failed to load. Error details have been saved.</p>' +
-                         '<button onclick="location.reload()" style="padding:10px;background:#007AFF;color:white;border:none;border-radius:6px;">Refresh</button>' +
-                         '<button onclick="downloadLogs()" style="margin-left:10px;padding:10px;background:#FF3B30;color:white;border:none;border-radius:6px;">Download Logs</button>';
-          document.body && document.body.appendChild(div);
+          // Show error UI and debug button immediately
+          showDebugUI();
         } catch (e) {
           console.error('Error in early error handler:', e);
         }
       };
+
+      // Function to show debug UI
+      function showDebugUI(showButton = true) {
+        if (showButton) {
+          var debugButton = document.createElement('button');
+          debugButton.innerHTML = '📱 Debug';
+          debugButton.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;padding:10px;background:rgba(0,0,0,0.7);color:white;border:none;border-radius:6px;font-family:system-ui;';
+          debugButton.onclick = window.downloadLogs;
+          document.body.appendChild(debugButton);
+        }
+      }
 
       // Function to download logs
       window.downloadLogs = function() {
@@ -47,6 +52,12 @@
             app_errors: JSON.parse(localStorage.getItem('app_errors') || '[]'),
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString(),
+            screen: {
+              width: window.innerWidth,
+              height: window.innerHeight,
+              pixelRatio: window.devicePixelRatio,
+              orientation: window.orientation
+            },
             localStorage: Object.keys(localStorage).reduce(function(obj, key) {
               try {
                 obj[key] = localStorage.getItem(key);
@@ -65,15 +76,29 @@
         }
       };
 
-      // Add debug button after 2 seconds if debug mode is enabled
-      if (import.meta.env.VITE_DEBUG_MODE === 'true') {
-        setTimeout(function() {
-          var debugButton = document.createElement('button');
-          debugButton.innerHTML = '📱 Debug';
-          debugButton.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;padding:10px;background:rgba(0,0,0,0.7);color:white;border:none;border-radius:6px;font-family:system-ui;';
-          debugButton.onclick = window.downloadLogs;
-          document.body.appendChild(debugButton);
-        }, 2000);
+      // Add touch gesture for debug mode
+      let touchCount = 0;
+      let lastTouch = 0;
+      
+      document.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 3) { // Three finger touch
+          const now = Date.now();
+          if (now - lastTouch < 500) { // Double three-finger touch within 500ms
+            touchCount++;
+            if (touchCount >= 2) {
+              touchCount = 0;
+              showDebugUI(true);
+            }
+          } else {
+            touchCount = 1;
+          }
+          lastTouch = now;
+        }
+      });
+
+      // Also show debug UI if there are any existing errors
+      if (localStorage.getItem('early_errors') || localStorage.getItem('app_errors')) {
+        showDebugUI(true);
       }
     </script>
   </head>
