@@ -7,46 +7,22 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
-    historyApiFallback: true,
   },
   build: {
-    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14', 
-      'ios12', 'ios13', 'ios14', 'ios15', 'ios16', 'ios17', 'ios18'
-    ],
+    target: ['es2022', 'chrome92', 'edge92', 'firefox91', 'safari15'],
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-core': ['react', 'react-dom', 'react-router-dom'],
-          'i18n': ['i18next', 'react-i18next', 'i18next-http-backend'],
-          'ui-libs': ['react-select', 'react-datetime', 'react-datepicker', 'react-flatpickr'],
-          'utils': ['moment', 'axios', 'countries-and-timezones', 'country-state-city']
+          'vendor': ['react', 'react-dom', 'react-router-dom'],
+          'i18n': ['i18next', 'react-i18next'],
+          'utils': ['axios', 'moment']
         }
-      },
-      treeshake: 'recommended'
+      }
     },
-    modulePreload: {
-      polyfill: true
-    },
-    sourcemap: true,
     minify: 'esbuild',
-    cssMinify: true,
-    assetsInlineLimit: 4096,
-    chunkSizeWarningLimit: 1000,
-    emptyOutDir: true
+    sourcemap: true
   },
   optimizeDeps: {
-    exclude: ['lucide-react'],
-    include: [
-      'react',
-      'react-dom',
-      'react-router-dom',
-      'i18next',
-      'react-i18next'
-    ]
-  },
-  esbuild: {
-    target: 'es2020',
-    legalComments: 'none',
-    treeShaking: true
+    exclude: ['lucide-react']
   }
 });
