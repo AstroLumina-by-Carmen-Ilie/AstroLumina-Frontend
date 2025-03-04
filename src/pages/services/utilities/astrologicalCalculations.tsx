@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ReadingPayload, ReadingResult } from '../../../types/planetPositions';
-import { InterpretedReadingResult } from '../../../types/natalChart';
+import { InterpretedReadingResult } from '../../../types/astralChart';
 
 const ASTROLOGICAL_API_URL = import.meta.env.VITE_ASTROLOGICAL_API_URL
 export const calculatePlanetPositions = async (language: string, payload: ReadingPayload): Promise<ReadingResult> => {
@@ -20,7 +20,22 @@ export const calculatePlanetPositions = async (language: string, payload: Readin
 
 export const calculateNatalChart = async (language: string, payload: ReadingPayload): Promise<InterpretedReadingResult> => {
   try {
-    const response = await axios.post(`${ASTROLOGICAL_API_URL}/api/v1/${language}/interpretations`, payload, {
+    const response = await axios.post(`${ASTROLOGICAL_API_URL}/api/v1/${language}/interpretations/natal`, payload, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    });
+    console.log('API Response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('API request error:', error);
+    throw new Error('Failed to fetch reading');
+  }
+};
+
+export const calculateKarmicChart = async (language: string, payload: ReadingPayload): Promise<InterpretedReadingResult> => {
+  try {
+    const response = await axios.post(`${ASTROLOGICAL_API_URL}/api/v1/${language}/interpretations/karmic`, payload, {
       headers: {
         'Content-Type': 'application/json'
       },

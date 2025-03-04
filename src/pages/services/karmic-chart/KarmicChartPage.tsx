@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import Navbar from '../../../components/navbar/Navbar';
 import { ReadingPayload, UserInfo, ContactInfo  } from '../../../types/astralChart';
-import natalChartIllustration from '../../../assets/astral-chart.svg';
+import karmicChartIllustration from '../../../assets/astral-chart.svg';
 import BirthDataForm from './BirthDataForm';
 import ContactForm from './ContactForm';
 import PaymentForm from './PaymentForm';
 import FinalStep from './FinalStep';
 
-const NatalChartPage: React.FC = () => {
+const KarmicChartPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [payload, setPayload] = useState<ReadingPayload | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -48,7 +48,7 @@ const NatalChartPage: React.FC = () => {
       <Navbar isScrolled={true} lightTheme={true} />
 
       <main className="container mx-auto px-6 pt-24">
-        <h1 className="text-4xl font-bold text-center mb-8">Natal Chart Reading</h1>
+        <h1 className="text-4xl font-bold text-center mb-8">Karmic Chart Reading</h1>
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-lg shadow-xl overflow-hidden">
             <div className="flex flex-col md:flex-row">
@@ -59,14 +59,14 @@ const NatalChartPage: React.FC = () => {
                 </h2>
                 <div className="mb-8">
                   <img
-                    src={natalChartIllustration}
-                    alt="Natal Chart"
+                    src={karmicChartIllustration}
+                    alt="Karmic Chart"
                     className="w-full max-w-md mx-auto mb-6"
                   />
                 </div>
                 <div className="prose prose-indigo">
                   <p className="text-lg text-gray-600 mb-4">
-                    Discover your unique astrological blueprint with our comprehensive natal chart reading.
+                    Discover your unique astrological blueprint with our comprehensive karmic chart reading.
                     This multi-step process will guide you through providing your birth details and receiving your personalized reading.
                   </p>
                 </div>
@@ -115,4 +115,4 @@ const NatalChartPage: React.FC = () => {
   );
 };
 
-export default NatalChartPage;
+export default KarmicChartPage;

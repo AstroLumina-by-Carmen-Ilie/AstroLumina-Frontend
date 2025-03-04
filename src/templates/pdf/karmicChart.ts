@@ -11,7 +11,7 @@ const formatTime = (date: Date): string => {
   return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 };
 
-export const generateNatalChartPDF = (
+export const generateKarmicChartPDF = (
   result: InterpretedReadingResult,
   userInfo: UserInfo,
   contactInfo: ContactInfo
@@ -28,7 +28,7 @@ export const generateNatalChartPDF = (
   doc.setFont('NotoSans');
   doc.setFontSize(20);
 
-  doc.text('Hartă Natala', 105, 15, { align: 'center' });
+  doc.text('Harta Karmica', 105, 15, { align: 'center' });
   
   let yPosition = 40;
 

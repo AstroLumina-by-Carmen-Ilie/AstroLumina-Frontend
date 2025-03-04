@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ReadingPayload, UserInfo, ContactInfo, InterpretedReadingResult } from '../../../types/astralChart';
-import { calculateNatalChart } from '../utilities/astrologicalCalculations';
-import { generateNatalChartPDF } from '../../../templates/pdf/natalChart';
+import { calculateKarmicChart } from '../utilities/astrologicalCalculations';
+import { generateKarmicChartPDF } from '../../../templates/pdf/karmicChart';
 
 interface FinalStepProps {
   payload: ReadingPayload;
@@ -27,7 +27,7 @@ const FinalStep: React.FC<FinalStepProps> = ({ payload, userInfo, contactInfo, p
     // startLoading();
     setIsGettingData(true);
     try {
-      const readingResult = await calculateNatalChart('ro', payload);
+      const readingResult = await calculateKarmicChart('ro', payload);
       setResult(readingResult);
     } catch (error) {
       console.error('Error fetching reading:', error);
@@ -41,21 +41,21 @@ const FinalStep: React.FC<FinalStepProps> = ({ payload, userInfo, contactInfo, p
   useEffect(() => {
     if (result && userInfo && contactInfo && paymentStatus) {
       const generatePDF = async () => {
-        const doc = generateNatalChartPDF(result, userInfo, contactInfo);
-        await doc.save(`natal-chart-${userInfo.name.toLowerCase().replace(/\s+/g, '-')}.pdf`);
+        const doc = generateKarmicChartPDF(result, userInfo, contactInfo);
+        await doc.save(`karmic-chart-${userInfo.name.toLowerCase().replace(/\s+/g, '-')}.pdf`);
       };
       generatePDF();
     }
   }, [result, userInfo, contactInfo, paymentStatus]);
 
-  const handleNatalChart = async () => {
+  const handleKarmicChart = async () => {
     await handleFormSubmit();
   };
 
   return (
     <div className="space-y-6 text-center">
       <div className="bg-amber-50 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold text-amber-900 mb-4">Your Natal Chart is Ready!</h2>
+        <h2 className="text-2xl font-bold text-amber-900 mb-4">Your Karmic Chart is Ready!</h2>
 
         <div className="space-y-2 text-left mb-6">
           <p className="text-amber-700"><span className="font-semibold">Name:</span> {userInfo.name}</p>
@@ -66,11 +66,11 @@ const FinalStep: React.FC<FinalStepProps> = ({ payload, userInfo, contactInfo, p
 
         <div className="space-y-4">
           <p className="text-amber-600">
-            Your personalized natal chart reading has been generated. Click below to download your detailed interpretation.
+            Your personalized karmic chart reading has been generated. Click below to download your detailed interpretation.
           </p>
 
           <button
-            onClick={handleNatalChart}
+            onClick={handleKarmicChart}
             className="w-full bg-amber-500 text-white py-3 px-6 rounded-lg hover:bg-amber-600 transition-colors flex items-center justify-center gap-2"
             style={{
               marginTop: '20px',
@@ -120,7 +120,7 @@ const FinalStep: React.FC<FinalStepProps> = ({ payload, userInfo, contactInfo, p
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h3 className="text-xl font-semibold text-gray-800 mb-4">What's Next?</h3>
         <p className="text-gray-600">
-          Take your time to review your natal chart interpretation. If you have any questions or would like a more detailed consultation,
+          Take your time to review your karmic chart interpretation. If you have any questions or would like a more detailed consultation,
           feel free to contact us using the provided contact information in your PDF.
         </p>
       </div>

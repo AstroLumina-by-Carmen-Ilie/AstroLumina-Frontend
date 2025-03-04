@@ -39,7 +39,7 @@ const Services = () => {
       ],
       duration: 'Acces instant',
       price: 'Gratuit',
-      link: '/services/planet-positions',
+      link: '/servicii/pozitia-astrelor',
       highlight: true
     },
     {
@@ -55,7 +55,22 @@ const Services = () => {
       ],
       duration: '90 minute',
       price: '350 RON',
-      link: '/services/natal-chart'
+      link: '/servicii/lumina-natala'
+    },
+    {
+      id: 'karmic-chart',
+      title: 'Interpretare Hartă Karmica',
+      description: 'O analiză detaliată a hărții tale astrologice de naștere, care dezvăluie aspectele cheie ale personalității tale, potențialul și provocările vieții.',
+      details: [
+        'Analiza detaliată a poziției Soarelui, Lunii și Ascendentului',
+        'Interpretarea plasamentelor planetare în case și semne',
+        'Identificarea aspectelor majore și impactul lor',
+        'Descoperirea nodurilor lunare și a destinului personal',
+        'Recomandări pentru dezvoltare personală bazate pe hartă'
+      ],
+      duration: '90 minute',
+      price: '350 RON',
+      link: '/servicii/lumina-karmica'
     },
     {
       id: 'transit-forecast',
@@ -70,7 +85,7 @@ const Services = () => {
       ],
       duration: '60 minute',
       price: '300 RON',
-      link: '/services/transit-forecast'
+      link: '/servicii/lumina-previzionala'
     },
     {
       id: 'relationship-synastry',
@@ -85,7 +100,7 @@ const Services = () => {
       ],
       duration: '120 minute',
       price: '400 RON',
-      link: '/services/relationship-synastry'
+      link: '/servicii/lumina-relationala'
     },
     {
       id: 'career-guidance',
@@ -100,11 +115,11 @@ const Services = () => {
       ],
       duration: '90 minute',
       price: '350 RON',
-      link: '/services/career-guidance'
+      link: '/servicii/consultatii'
     },
     {
-      id: 'solar-return',
-      title: 'Analiza Revoluției Solare',
+      id: 'medical-astrology',
+      title: 'Astrologie Medicala',
       description: 'O previziune detaliată pentru anul tău astrologic, începând cu ziua ta de naștere, care evidențiază temele principale și oportunitățile anului ce urmează.',
       details: [
         'Interpretarea hărții revoluției solare',
@@ -115,22 +130,7 @@ const Services = () => {
       ],
       duration: '75 minute',
       price: '325 RON',
-      link: '/services/solar-return'
-    },
-    {
-      id: 'electional-astrology',
-      title: 'Astrologie Elecțională',
-      description: 'Identificarea celui mai favorabil moment pentru a începe un proiect important, precum o căsătorie, lansarea unei afaceri sau semnarea unor contracte.',
-      details: [
-        'Analiza perioadelor favorabile pentru acțiune',
-        'Evaluarea aspectelor planetare relevante',
-        'Selectarea datei și orei optime',
-        'Strategii de evitare a perioadelor dificile',
-        'Recomandări pentru maximizarea succesului'
-      ],
-      duration: '60 minute',
-      price: '300 RON',
-      link: '/services/electional-astrology'
+      link: '/servicii/consultatii'
     }
   ];
 
