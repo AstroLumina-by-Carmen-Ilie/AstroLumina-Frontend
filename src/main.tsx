@@ -10,6 +10,8 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from './lib/i18n';
 import PlanetPositions from './pages/services/PlanetPositions';
 import NatalChart from './pages/services/NatalChart';
+import KarmicChart from './pages/services/KarmicChart';
+import Bookings from './pages/services/Bookings';
 import NotFound from './pages/NotFound';
 import AboutMe from './pages/AboutMe';
 import Contact from './pages/Contact';
@@ -26,12 +28,16 @@ createRoot(rootElement).render(
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <Routes>
             <Route path="/" element={<App />} />
-            <Route path="/about" element={<AboutMe />} />
+            <Route path="/despre-mine" element={<AboutMe />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/services/planet-positions" element={<PlanetPositions />} />
-            <Route path="/services/natal-chart" element={<NatalChart />} />
-            <Route path="/payment-error" element={<PaymentErrorPage />} />
+            <Route path="/servicii" element={<Services />} />
+            <Route path="/servicii/pozitia-astrelor" element={<PlanetPositions />} />
+            <Route path="/servicii/lumina-natala" element={<NatalChart />} />
+            <Route path="/servicii/lumina-karmica" element={<KarmicChart />} />
+            <Route path="/servicii/lumina-previzionala" element={<NotFound />} />
+            <Route path="/servicii/lumina-relationala" element={<NotFound />} />
+            <Route path="/servicii/consultatii" element={<Bookings />} />
+            <Route path="/plata-esuata" element={<PaymentErrorPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>

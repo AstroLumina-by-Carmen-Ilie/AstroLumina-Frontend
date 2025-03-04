@@ -40,10 +40,10 @@ export const NavbarLinks: React.FC<{ linkClasses: string }> = ({ linkClasses }) 
   
   return (
     <>
-      <Link to="/services" className={linkClasses}>
+      <Link to="/servicii" className={linkClasses}>
         {t('services')}
       </Link>
-      <Link to="/about" className={linkClasses}>
+      <Link to="/despre-mine" className={linkClasses}>
         {t('about')}
       </Link>
       <Link to="/contact" className={linkClasses}>
