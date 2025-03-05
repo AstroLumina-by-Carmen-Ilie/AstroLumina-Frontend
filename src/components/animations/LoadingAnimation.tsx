@@ -6,16 +6,16 @@ const LoadingAnimation: React.FC = () => {
   const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
-    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    // Improved iOS detection
+    const isIOSDevice = 
+      /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+      (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome') && 'ontouchend' in document);
+    
     setIsIOS(isIOSDevice);
   }, []);
 
-  if (isIOS) {
-    return <SimpleLoadingSpinner />;
-  }
-
-  return <ParticleLoadingAnimation />;
+  return isIOS ? <SimpleLoadingSpinner /> : <ParticleLoadingAnimation />;
 };
 
 export default LoadingAnimation;
