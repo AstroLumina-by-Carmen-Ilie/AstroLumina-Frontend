@@ -1,4 +1,3 @@
-import './lib/polyfills';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -8,6 +7,7 @@ import 'flatpickr/dist/themes/material_blue.css';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './lib/i18n';
+// import './lib/polyfills';
 import PlanetPositions from './pages/services/PlanetPositions';
 import NatalChart from './pages/services/NatalChart';
 import KarmicChart from './pages/services/KarmicChart';
@@ -24,7 +24,7 @@ if (!rootElement) throw new Error('Failed to find the root element');
 createRoot(rootElement).render(
   <React.StrictMode>
     <LoadingProvider>
-      <I18nextProvider i18n={i18n}>
+      {/* <I18nextProvider i18n={i18n}> */}
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <Routes>
             <Route path="/" element={<App />} />
@@ -41,7 +41,7 @@ createRoot(rootElement).render(
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
-      </I18nextProvider>
+      {/* </I18nextProvider> */}
     </LoadingProvider>
   </React.StrictMode>
 );
