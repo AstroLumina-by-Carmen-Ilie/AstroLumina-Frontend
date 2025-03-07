@@ -29,7 +29,7 @@ const log = (message: string) => {
     if (window.earlyLog) {
         window.earlyLog(message);
     }
-    console.log(message);
+    alert(message);
 };
 
 const rootElement = document.getElementById('root');

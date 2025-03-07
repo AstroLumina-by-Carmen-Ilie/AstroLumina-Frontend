@@ -10,6 +10,9 @@
     <meta name="theme-color" content="#000000" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>AstroLumina</title>
+  </head>
+  <body>
+    <div id="root"></div>
     <script>
       // Initialize debug container immediately
       (function() {
@@ -22,7 +25,11 @@
             message: message
           };
           window.earlyLogs.push(log);
-          updateDebugDisplay();
+          
+          // Only try to update display if document.body exists
+          if (document.body) {
+            updateDebugDisplay();
+          }
         }
 
         function createDebugContainer() {
@@ -48,15 +55,23 @@
         }
 
         function updateDebugDisplay() {
-          const container = document.getElementById('early-debug-container') || createDebugContainer();
-          container.style.display = 'block';
-          container.innerHTML = window.earlyLogs
-            .map(log => `<div style="color: ${log.type === 'error' ? '#ff6b6b' : '#a5d8ff'}">
-              ${log.timestamp}: ${log.message}
-            </div>`)
-            .join('');
-          container.scrollTop = container.scrollHeight;
+          let container = document.getElementById('early-debug-container');
+          if (!container && document.body) {
+            container = createDebugContainer();
+          }
+          if (container) {
+            container.style.display = 'block';
+            container.innerHTML = window.earlyLogs
+              .map(log => `<div style="color: ${log.type === 'error' ? '#ff6b6b' : '#a5d8ff'}">
+                ${log.timestamp}: ${log.message}
+              </div>`)
+              .join('');
+            container.scrollTop = container.scrollHeight;
+          }
         }
+
+        // Make logging function globally available immediately
+        window.earlyLog = addLog;
 
         // Add initial system info
         addLog('🔍 Early logging initialized');
@@ -65,8 +80,15 @@
         addLog(`🔧 Platform: ${navigator.platform}`);
 
         // Monitor DOM loading stages
-        document.addEventListener('DOMContentLoaded', () => addLog('✅ DOM Content Loaded'));
-        window.addEventListener('load', () => addLog('✅ Window Loaded'));
+        document.addEventListener('DOMContentLoaded', () => {
+          addLog('✅ DOM Content Loaded');
+          updateDebugDisplay(); // Try to create container once DOM is ready
+        });
+        
+        window.addEventListener('load', () => {
+          addLog('✅ Window Loaded');
+          updateDebugDisplay(); // Ensure container is created after full load
+        });
 
         // Catch early errors
         window.onerror = function(msg, url, line, col, error) {
@@ -76,17 +98,13 @@
           }
           return false;
         };
-
-        // Make logging function globally available
-        window.earlyLog = addLog;
       })();
     </script>
-  </head>
-  <body>
-    <div id="root"></div>
     <script>
       // Log that we're about to start loading the app
-      window.earlyLog('🚀 Starting to load application...');
+      if (window.earlyLog) {
+        window.earlyLog('🚀 Starting to load application...');
+      }
     </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
