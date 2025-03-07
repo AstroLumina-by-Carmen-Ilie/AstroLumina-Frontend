@@ -7,7 +7,6 @@ import 'flatpickr/dist/themes/material_blue.css';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './lib/i18n';
-import { logger } from './utils/logger';
 import PlanetPositions from './pages/services/PlanetPositions';
 import NatalChart from './pages/services/NatalChart';
 import KarmicChart from './pages/services/KarmicChart';
@@ -18,22 +17,24 @@ import Contact from './pages/Contact';
 import Services from './pages/Services';
 import PaymentErrorPage from './pages/services/errors/PaymentErrorPage';
 
+// Declare the earlyLog property on the Window interface
+declare global {
+  interface Window {
+      earlyLog?: (message: string) => void;
+  }
+}
+
+// Use the early logging system if available
+const log = (message: string) => {
+    if (window.earlyLog) {
+        window.earlyLog(message);
+    }
+    console.log(message);
+};
+
 const rootElement = document.getElementById('root');
 
-// Add debug logging
-logger.log('Application starting', {
-    userAgent: navigator.userAgent,
-    platform: navigator.platform,
-    viewport: {
-        width: window.innerWidth,
-        height: window.innerHeight
-    }
-});
-
-// Show logs on screen for iOS devices
-if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-    logger.showLogsOnScreen();
-}
+log('⚛️ React initialization starting');
 
 if (rootElement) {
     const root = createRoot(rootElement);
@@ -63,10 +64,13 @@ if (rootElement) {
                 </I18nextProvider>
             </React.StrictMode>
         );
-        logger.log('Application rendered successfully');
+        log('✅ React rendered successfully');
     } catch (error) {
-        logger.error('Error rendering application', error);
+        log(`❌ React render error: ${error instanceof Error ? error.message : String(error)}`);
+        if (error instanceof Error && error.stack) {
+            log(`Stack: ${error.stack}`);
+        }
     }
 } else {
-    logger.error('Root element not found');
+    log('❌ Root element not found');
 }
