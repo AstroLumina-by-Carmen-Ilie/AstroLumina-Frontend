@@ -25,12 +25,21 @@ declare global {
 }
 
 // Use the early logging system if available
-const log = (message: string) => {
-    if (window.earlyLog) {
-        window.earlyLog(message);
-    }
-    alert(message);
-};
+const log = (() => {
+    let isLogging = false;
+    return (message: string) => {
+        if (isLogging) return; // Prevent recursive calls
+        isLogging = true;
+        try {
+            if (window.earlyLog) {
+                window.earlyLog(message);
+            }
+            console.log(message);
+        } finally {
+            isLogging = false;
+        }
+    };
+})();
 
 const rootElement = document.getElementById('root');
 
