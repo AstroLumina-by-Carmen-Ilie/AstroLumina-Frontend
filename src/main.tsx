@@ -38,7 +38,7 @@ createRoot(rootElement).render(
             <Route path="/servicii/lumina-relationala" element={<NotFound />} />
             <Route path="/servicii/consultatii" element={<Bookings />} />
             <Route path="/plata-esuata" element={<PaymentErrorPage />} />
-            {/* <Route path="*" element={<NotFound />} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
       </I18nextProvider>
