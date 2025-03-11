@@ -16,6 +16,10 @@
     <script>
       // Initialize debug container immediately
       (function() {
+        // Check if debug mode is enabled
+        const debugMode = "%VITE_DEBUG_MODE%";
+        if (debugMode !== "true") return; // Exit early if debug mode is not enabled
+        
         window.earlyLogs = [];
         
         function addLog(message, type = 'info') {
@@ -102,7 +106,7 @@
     </script>
     <script>
       // Log that we're about to start loading the app
-      if (window.earlyLog) {
+      if (window.earlyLog && "%VITE_DEBUG_MODE%" === "true") {
         window.earlyLog('🚀 Starting to load application...');
       }
     </script>
