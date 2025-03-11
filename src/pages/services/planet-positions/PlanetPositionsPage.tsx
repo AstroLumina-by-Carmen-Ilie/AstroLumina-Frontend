@@ -6,7 +6,7 @@ import astralChartSvg from '../../../assets/astral-chart.svg';
 import BirthDataForm from './BirthDataForm';
 import ResultsDisplay from './ResultsDisplay';
 
-const PlanetPositions: React.FC = () => {
+const PlanetPositionsPage: React.FC = () => {
   const [result, setResult] = useState<ReadingResult | null>(null);
   const [userInfo, setUserInfo] = useState<{
     name: string;
@@ -79,4 +79,4 @@ const PlanetPositions: React.FC = () => {
   );
 };
 
-export default PlanetPositions;
+export default PlanetPositionsPage;
