@@ -18,9 +18,11 @@ const PlanetPositionsPage: React.FC = () => {
 
   useEffect(() => {
     startLoading();
-    const timer = setTimeout(stopLoading, 1500);
+    const timer = setTimeout(() => {
+      stopLoading();
+    }, 1500);
     return () => clearTimeout(timer);
-  }, [startLoading, stopLoading]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100">

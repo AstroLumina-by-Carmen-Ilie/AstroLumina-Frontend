@@ -7,7 +7,7 @@ import 'flatpickr/dist/themes/material_blue.css';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './lib/i18n';
-import PlanetPositionsPage from './pages/services/planet-positions/PlanetPositionsPage';
+import PlanetPositions from './pages/services/PlanetPositions';
 import NatalChart from './pages/services/NatalChart';
 import KarmicChart from './pages/services/KarmicChart';
 import Bookings from './pages/services/Bookings';
@@ -74,7 +74,7 @@ if (rootElement) {
                 <Route path="/despre-mine" element={<AboutMe />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/servicii" element={<Services />} />
-                <Route path="/servicii/pozitia-astrelor" element={<PlanetPositionsPage />} />
+                <Route path="/servicii/pozitia-astrelor" element={<PlanetPositions />} />
                 {/* <Route path="/servicii/lumina-natala" element={<NatalChart />} /> */}
                 {/* <Route path="/servicii/lumina-karmica" element={<KarmicChart />} /> */}
                 {/* <Route path="/servicii/lumina-previzionala" element={<NotFound />} /> */}
