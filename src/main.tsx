@@ -68,17 +68,17 @@ if (rootElement) {
             <Router>
               <Routes>
                 <Route path="/" element={<App />} />
-                <Route path="/despre-mine" element={<AboutMe />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/servicii" element={<Services />} />
-                <Route path="/servicii/pozitia-astrelor" element={<PlanetPositions />} />
-                <Route path="/servicii/lumina-natala" element={<NatalChart />} />
-                <Route path="/servicii/lumina-karmica" element={<KarmicChart />} />
-                <Route path="/servicii/lumina-previzionala" element={<NotFound />} />
-                <Route path="/servicii/lumina-relationala" element={<NotFound />} />
-                <Route path="/servicii/consultatii" element={<Bookings />} />
-                <Route path="/plata-esuata" element={<PaymentErrorPage />} />
-                <Route path="*" element={<NotFound />} />
+                {/* <Route path="/despre-mine" element={<AboutMe />} /> */}
+                {/* <Route path="/contact" element={<Contact />} /> */}
+                {/* <Route path="/servicii" element={<Services />} /> */}
+                {/* <Route path="/servicii/pozitia-astrelor" element={<PlanetPositions />} /> */}
+                {/* <Route path="/servicii/lumina-natala" element={<NatalChart />} /> */}
+                {/* <Route path="/servicii/lumina-karmica" element={<KarmicChart />} /> */}
+                {/* <Route path="/servicii/lumina-previzionala" element={<NotFound />} /> */}
+                {/* <Route path="/servicii/lumina-relationala" element={<NotFound />} /> */}
+                {/* <Route path="/servicii/consultatii" element={<Bookings />} /> */}
+                {/* <Route path="/plata-esuata" element={<PaymentErrorPage />} /> */}
+                {/* <Route path="*" element={<NotFound />} /> */}
               </Routes>
             </Router>
           </LoadingProvider>
