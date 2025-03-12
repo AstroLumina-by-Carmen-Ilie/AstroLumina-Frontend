@@ -4,7 +4,7 @@ import { ReadingResult } from '../../../types/planetPositions';
 import astralChartSvg from '../../../assets/astral-chart.svg';
 import BirthDataForm from './BirthDataForm';
 import ResultsDisplay from './ResultsDisplay';
-import { useLoading } from '../../../contexts/LoadingContext';
+// import { useLoading } from '../../../contexts/LoadingContext';
 
 const PlanetPositionsPage: React.FC = () => {
   const [result, setResult] = useState<ReadingResult | null>(null);
@@ -14,17 +14,17 @@ const PlanetPositionsPage: React.FC = () => {
     birthHour: Date;
     location: string;
   } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { startLoading, stopLoading } = useLoading();
+  // const [isLoading, setIsLoading] = useState(true);
+  // const { startLoading, stopLoading } = useLoading();
 
   // Loading effect
-  useEffect(() => {
-    startLoading();
-    const timer = setTimeout(() => {
-      stopLoading();
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  // useEffect(() => {
+  //   startLoading();
+  //   const timer = setTimeout(() => {
+  //     stopLoading();
+  //   }, 1500);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100">
