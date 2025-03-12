@@ -65,7 +65,7 @@ if (rootElement) {
 
   try {
     root.render(
-      <React.StrictMode>
+      // <React.StrictMode>
         <I18nextProvider i18n={i18n}>
           <LoadingProvider>
             <Router>
@@ -74,12 +74,12 @@ if (rootElement) {
                 <Route path="/despre-mine" element={<AboutMe />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/servicii" element={<Services />} />
-                <Route path="/servicii/pozitia-astrelor" element={<PlanetPositions />} />
+                <Route path="/pozitia-astrelor" element={<PlanetPositions />} />
               </Routes>
             </Router>
           </LoadingProvider>
         </I18nextProvider>
-      </React.StrictMode>
+      // </React.StrictMode>
     );
     if (import.meta.env.VITE_DEBUG_MODE) {
       log('✅ React rendered successfully');
