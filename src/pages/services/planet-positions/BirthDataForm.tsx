@@ -227,7 +227,7 @@ const BirthDataForm: React.FC = () => {
         {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
       </div>
 
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthDate">Birth Date</label>
         <Flatpickr
           value={formState.birthDate || ''}
@@ -241,9 +241,9 @@ const BirthDataForm: React.FC = () => {
           required
         />
         {errors.birthDate && <p className="text-red-500 text-sm mt-1">{errors.birthDate}</p>}
-      </div>
+      </div> */}
 
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthHour">Birth Hour</label>
         <Flatpickr
           value={formState.birthHour || ''}
@@ -261,7 +261,7 @@ const BirthDataForm: React.FC = () => {
           required
         />
         {errors.birthHour && <p className="text-red-500 text-sm mt-1">{errors.birthHour}</p>}
-      </div>
+      </div> */}
 
       {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthCountry">Birth Country</label>
