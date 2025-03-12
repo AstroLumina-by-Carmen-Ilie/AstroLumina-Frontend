@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLoading } from '../../../contexts/LoadingContext';
 import Navbar from '../../../components/navbar/Navbar';
 import { ReadingResult } from '../../../types/planetPositions';
@@ -15,14 +15,24 @@ const PlanetPositionsPage: React.FC = () => {
     location: string;
   } | null>(null);
   const { startLoading, stopLoading } = useLoading();
+  const isMounted = useRef(true);
 
+  // Fix for infinite loop - add dependencies and cleanup
   useEffect(() => {
     startLoading();
+    
     const timer = setTimeout(() => {
-      stopLoading();
+      if (isMounted.current) {
+        stopLoading();
+      }
     }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+    
+    return () => {
+      isMounted.current = false;
+      clearTimeout(timer);
+      stopLoading();
+    };
+  }, [startLoading, stopLoading]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100">
