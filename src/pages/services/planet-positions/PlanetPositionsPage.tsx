@@ -1,30 +1,30 @@
-// import { useState, useEffect } from 'react';
-// import Navbar from '../../../components/navbar/Navbar';
-// import { ReadingResult } from '../../../types/planetPositions';
+import { useState, useEffect } from 'react';
+import Navbar from '../../../components/navbar/Navbar';
+import { ReadingResult } from '../../../types/planetPositions';
 import astralChartSvg from '../../../assets/astral-chart.svg';
-// import BirthDataForm from './BirthDataForm';
-// import ResultsDisplay from './ResultsDisplay';
-// import { useLoading } from '../../../contexts/LoadingContext';
+import BirthDataForm from './BirthDataForm';
+import ResultsDisplay from './ResultsDisplay';
+import { useLoading } from '../../../contexts/LoadingContext';
 
 const PlanetPositionsPage = () => {
-  // const [result, setResult] = useState<ReadingResult | null>(null);
-  // const [userInfo, setUserInfo] = useState<{
-  //   name: string;
-  //   birthDate: Date;
-  //   birthHour: Date;
-  //   location: string;
-  // } | null>(null);
+  const [result, setResult] = useState<ReadingResult | null>(null);
+  const [userInfo, setUserInfo] = useState<{
+    name: string;
+    birthDate: Date;
+    birthHour: Date;
+    location: string;
+  } | null>(null);
 
-  // const { startLoading, stopLoading } = useLoading();
+  const { startLoading, stopLoading } = useLoading();
 
-  // // Loading effect
-  // useEffect(() => {
-  //   startLoading();
-  //   const timer = setTimeout(() => {
-  //     stopLoading();
-  //   }, 1500);
-  //   return () => clearTimeout(timer);
-  // }, []);
+  // Loading effect
+  useEffect(() => {
+    startLoading();
+    const timer = setTimeout(() => {
+      stopLoading();
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100">
