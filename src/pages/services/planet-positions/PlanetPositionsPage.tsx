@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../../../components/navbar/Navbar';
 import { ReadingResult } from '../../../types/planetPositions';
 import astralChartSvg from '../../../assets/astral-chart.svg';
@@ -6,7 +6,7 @@ import BirthDataForm from './BirthDataForm';
 import ResultsDisplay from './ResultsDisplay';
 // import { useLoading } from '../../../contexts/LoadingContext';
 
-const PlanetPositionsPage: React.FC = () => {
+const PlanetPositionsPage = () => {
   const [result, setResult] = useState<ReadingResult | null>(null);
   const [userInfo, setUserInfo] = useState<{
     name: string;
@@ -14,10 +14,9 @@ const PlanetPositionsPage: React.FC = () => {
     birthHour: Date;
     location: string;
   } | null>(null);
-  // const [isLoading, setIsLoading] = useState(true);
   // const { startLoading, stopLoading } = useLoading();
 
-  // Loading effect
+  // // Loading effect
   // useEffect(() => {
   //   startLoading();
   //   const timer = setTimeout(() => {
