@@ -42,7 +42,8 @@ const PlanetPositionsPage: React.FC = () => {
     }
 
     try {
-      return <BirthDataForm setResult={setResult} setUserInfo={setUserInfo} />;
+      // return <BirthDataForm setResult={setResult} setUserInfo={setUserInfo} />;
+      return <BirthDataForm />;
     } catch (error) {
       console.error('Error rendering form:', error);
       return <div>An error occurred while rendering the form</div>;

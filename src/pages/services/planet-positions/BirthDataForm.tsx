@@ -16,7 +16,8 @@ interface BirthDataFormProps {
   } | null>>;
 }
 
-const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo }) => {
+// const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo }) => {
+const BirthDataForm: React.FC = () => {
   // Form state
   const [formState, setFormState] = useState({
     fullName: '',
@@ -190,13 +191,13 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
       const result = await calculatePlanetPositions('ro', payload);
 
       // Update parent component state
-      setResult(result);
-      setUserInfo({
-        name: fullName,
-        birthDate: birthDate,
-        birthHour: birthHour,
-        location: `${city}, ${state}, ${country}`
-      });
+      // setResult(result);
+      // setUserInfo({
+      //   name: fullName,
+      //   birthDate: birthDate,
+      //   birthHour: birthHour,
+      //   location: `${city}, ${state}, ${country}`
+      // });
     } catch (error) {
       console.error('Error calculating positions:', error);
       setErrors(prev => ({ ...prev, calculation: 'Failed to calculate positions. Please try again.' }));
@@ -212,6 +213,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
 
   return (
     <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleCalculatePositions(); }}>
+      <div>abc</div>
       <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="fullName">Full Name</label>
         <input
@@ -261,7 +263,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         {errors.birthHour && <p className="text-red-500 text-sm mt-1">{errors.birthHour}</p>}
       </div>
 
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthCountry">Birth Country</label>
         <Select
           id="birthCountry"
@@ -274,7 +276,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           isSearchable
         />
         {errors.birthCountry && <p className="text-red-500 text-sm mt-1">{errors.birthCountry}</p>}
-      </div>
+      </div> */}
 
       {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthCounty">Birth County/State</label>
@@ -290,9 +292,9 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           isDisabled={!formState.birthCountry}
         />
         {errors.birthCounty && <p className="text-red-500 text-sm mt-1">{errors.birthCounty}</p>}
-      </div>
+      </div> */}
 
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthCity">Birth City</label>
         <Select
           id="birthCity"
