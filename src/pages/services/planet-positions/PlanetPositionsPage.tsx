@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/navbar/Navbar';
 import { ReadingResult } from '../../../types/planetPositions';
 import astralChartSvg from '../../../assets/astral-chart.svg';
@@ -6,7 +6,7 @@ import BirthDataForm from './BirthDataForm';
 import ResultsDisplay from './ResultsDisplay';
 import { useLoading } from '../../../contexts/LoadingContext';
 
-const PlanetPositionsPage = () => {
+const PlanetPositionsPage: React.FC  = () => {
   const [result, setResult] = useState<ReadingResult | null>(null);
   const [userInfo, setUserInfo] = useState<{
     name: string;
@@ -24,6 +24,13 @@ const PlanetPositionsPage = () => {
     }, 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  const renderContent = () => {
+    if (result && userInfo) {
+      return <ResultsDisplay result={result} userInfo={userInfo} />;
+    }
+    return <BirthDataForm setResult={setResult} setUserInfo={setUserInfo} />;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100">
@@ -68,11 +75,7 @@ const PlanetPositionsPage = () => {
                   </h2>
                 </div>
                 
-                {/* {!result || !userInfo ? (
-                  <BirthDataForm setResult={setResult} setUserInfo={setUserInfo} />
-                ) : (
-                  <ResultsDisplay result={result} userInfo={userInfo} />
-                )} */}
+                {renderContent()}
               </div>
             </div>
           </div>

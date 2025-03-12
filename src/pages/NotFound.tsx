@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Moon, Star, ArrowLeft } from 'lucide-react';
 
-const NotFound = () => {
+const NotFound: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 

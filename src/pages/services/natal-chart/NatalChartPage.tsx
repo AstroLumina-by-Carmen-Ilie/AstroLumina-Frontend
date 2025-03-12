@@ -104,7 +104,7 @@ const NatalChartPage: React.FC = () => {
                       />
                     </div>
                   </div>
-                  {renderStep()}
+                  {/* {renderStep()} */}
                 </div>
               </div>
             </div>
