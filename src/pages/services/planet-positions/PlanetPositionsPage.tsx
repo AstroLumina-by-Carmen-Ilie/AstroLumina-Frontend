@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useLoading } from '../../../contexts/LoadingContext';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/navbar/Navbar';
 import { ReadingResult } from '../../../types/planetPositions';
 import astralChartSvg from '../../../assets/astral-chart.svg';
@@ -14,35 +13,23 @@ const PlanetPositionsPage: React.FC = () => {
     birthHour: Date;
     location: string;
   } | null>(null);
-  const { startLoading, stopLoading } = useLoading();
-  const initialLoadDone = useRef(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Efectuăm loading doar la prima randare, nu la fiecare re-render
+  // Simplificăm complet abordarea, eliminând dependența de LoadingContext
   useEffect(() => {
-    if (!initialLoadDone.current) {
-      initialLoadDone.current = true;
-      
-      // Folosim un flag local pentru a preveni actualizările de stare după demontare
-      let isActive = true;
-      
-      // Pornim animația de loading
-      startLoading();
-      
-      // Setăm un timer pentru a opri loading-ul
-      const timer = setTimeout(() => {
-        if (isActive) {
-          stopLoading();
-        }
-      }, 1500);
-      
-      // Funcția de cleanup
-      return () => {
-        isActive = false;
-        clearTimeout(timer);
-        stopLoading();
-      };
-    }
-  }, []); 
+    // Simulăm un loading inițial
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    
+    // Cleanup
+    return () => clearTimeout(timer);
+  }, []); // Rulăm doar la montare
+
+  // Dacă este în starea de loading, nu afișăm nimic încă
+  if (isLoading) {
+    return null; // Sau un spinner local dacă este necesar
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100">
