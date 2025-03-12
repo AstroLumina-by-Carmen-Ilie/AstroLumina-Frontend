@@ -27,7 +27,7 @@ const PlanetPositionsPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100">
-      {/* <Navbar isScrolled={true} lightTheme={true} /> */}
+      <Navbar isScrolled={true} lightTheme={true} />
 
       <main className="container mx-auto px-6 pt-24">
         <h1 className="text-4xl font-bold text-center mb-8">Planet Positions</h1>
@@ -68,11 +68,11 @@ const PlanetPositionsPage = () => {
                   </h2>
                 </div>
                 
-                {!result || !userInfo ? (
+                {/* {!result || !userInfo ? (
                   <BirthDataForm setResult={setResult} setUserInfo={setUserInfo} />
                 ) : (
                   <ResultsDisplay result={result} userInfo={userInfo} />
-                )}
+                )} */}
               </div>
             </div>
           </div>
