@@ -14,7 +14,6 @@ const PlanetPositionsPage = () => {
     birthHour: Date;
     location: string;
   } | null>(null);
-
   const { startLoading, stopLoading } = useLoading();
 
   // Loading effect
@@ -69,11 +68,11 @@ const PlanetPositionsPage = () => {
                   </h2>
                 </div>
                 
-                {/* {!result || !userInfo ? (
+                {!result || !userInfo ? (
                   <BirthDataForm setResult={setResult} setUserInfo={setUserInfo} />
                 ) : (
                   <ResultsDisplay result={result} userInfo={userInfo} />
-                )} */}
+                )}
               </div>
             </div>
           </div>
