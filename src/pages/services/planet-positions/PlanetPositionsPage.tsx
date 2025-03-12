@@ -22,15 +22,9 @@ const PlanetPositionsPage: React.FC = () => {
     startLoading();
     const timer = setTimeout(() => {
       stopLoading();
-      setIsLoading(false);
     }, 1500);
     return () => clearTimeout(timer);
   }, []);
-
-  // Dacă este în starea de loading, nu afișăm nimic încă
-  if (isLoading) {
-    return null; // Sau un spinner local dacă este necesar
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100">
