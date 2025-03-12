@@ -15,24 +15,34 @@ const PlanetPositionsPage: React.FC = () => {
     location: string;
   } | null>(null);
   const { startLoading, stopLoading } = useLoading();
-  const isMounted = useRef(true);
+  const initialLoadDone = useRef(false);
 
-  // Fix for infinite loop - add dependencies and cleanup
+  // Efectuăm loading doar la prima randare, nu la fiecare re-render
   useEffect(() => {
-    startLoading();
-    
-    const timer = setTimeout(() => {
-      if (isMounted.current) {
+    if (!initialLoadDone.current) {
+      initialLoadDone.current = true;
+      
+      // Folosim un flag local pentru a preveni actualizările de stare după demontare
+      let isActive = true;
+      
+      // Pornim animația de loading
+      startLoading();
+      
+      // Setăm un timer pentru a opri loading-ul
+      const timer = setTimeout(() => {
+        if (isActive) {
+          stopLoading();
+        }
+      }, 1500);
+      
+      // Funcția de cleanup
+      return () => {
+        isActive = false;
+        clearTimeout(timer);
         stopLoading();
-      }
-    }, 1500);
-    
-    return () => {
-      isMounted.current = false;
-      clearTimeout(timer);
-      stopLoading();
-    };
-  }, [startLoading, stopLoading]);
+      };
+    }
+  }, []); 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100">
