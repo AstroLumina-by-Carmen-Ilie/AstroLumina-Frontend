@@ -6,7 +6,7 @@ import BirthDataForm from './BirthDataForm';
 import ResultsDisplay from './ResultsDisplay';
 import { useLoading } from '../../../contexts/LoadingContext';
 
-const PlanetPositionsPage: React.FC  = () => {
+const PlanetPositionsPage: React.FC = () => {
   const [result, setResult] = useState<ReadingResult | null>(null);
   const [userInfo, setUserInfo] = useState<{
     name: string;
@@ -26,10 +26,20 @@ const PlanetPositionsPage: React.FC  = () => {
   }, []);
 
   const renderContent = () => {
-    // if (result && userInfo) {
-      return <ResultsDisplay result={result!} userInfo={userInfo!} />;
-    // }
-    // return <BirthDataForm setResult={setResult} setUserInfo={setUserInfo} />;
+    if (result && userInfo) {
+      try {
+        return <ResultsDisplay result={result} userInfo={userInfo} />;
+      } catch (error) {
+        console.error('Error rendering results:', error);
+        return <div>An error occurred while rendering results</div>;
+      }
+    }
+    try {
+      return <BirthDataForm setResult={setResult} setUserInfo={setUserInfo} />;
+    } catch (error) {
+      console.error('Error rendering form:', error);
+      return <div>An error occurred while rendering the form</div>;
+    }
   };
 
   return (
@@ -65,7 +75,7 @@ const PlanetPositionsPage: React.FC  = () => {
                   </ul>
                 </div>
               </div>
-              
+
               {/* Right Panel - Form or Results */}
               <div className="w-full md:w-1/2 p-4 sm:p-8">
                 {/* Mobile Title */}
@@ -74,7 +84,7 @@ const PlanetPositionsPage: React.FC  = () => {
                     Discover Your Celestial Blueprint
                   </h2>
                 </div>
-                
+
                 {renderContent()}
               </div>
             </div>

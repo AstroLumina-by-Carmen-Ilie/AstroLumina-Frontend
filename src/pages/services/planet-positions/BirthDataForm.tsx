@@ -6,14 +6,14 @@ import 'flatpickr/dist/themes/material_blue.css';
 import { FormErrors, LocationCoordinates, ReadingPayload, ReadingResult, SelectOption } from '../../../types/planetPositions';
 import { calculatePlanetPositions } from '../utilities/astrologicalCalculations';
 
-const BirthDataForm: React.FC<{ 
-  setResult: React.Dispatch<React.SetStateAction<ReadingResult | null>>; 
-  setUserInfo: React.Dispatch<React.SetStateAction<{ 
-    name: string; 
-    birthDate: Date; 
+const BirthDataForm: React.FC<{
+  setResult: React.Dispatch<React.SetStateAction<ReadingResult | null>>;
+  setUserInfo: React.Dispatch<React.SetStateAction<{
+    name: string;
+    birthDate: Date;
     birthHour: Date;
-    location: string 
-  } | null>>; 
+    location: string
+  } | null>>;
 }> = ({ setResult, setUserInfo }) => {
   const [fullName, setFullName] = useState('');
 
@@ -31,7 +31,7 @@ const BirthDataForm: React.FC<{
   const [errors, setErrors] = useState<FormErrors>({});
 
   const [isCalculating, setIsCalculating] = useState(false);
-  
+
   useEffect(() => {
     const countries = Country.getAllCountries().map(country => ({
       value: country.isoCode,
@@ -70,9 +70,9 @@ const BirthDataForm: React.FC<{
 
   useEffect(() => {
     if (birthCounty) {
-      const cities = City.getCitiesOfState(birthCountry, birthCounty).map(city => ({ 
-        value: city.name, 
-        label: city.name 
+      const cities = City.getCitiesOfState(birthCountry, birthCounty).map(city => ({
+        value: city.name,
+        label: city.name
       }));
       setCityOptions([{ value: '', label: 'Select ...' }, ...cities]);
       setBirthCity('');
@@ -84,9 +84,9 @@ const BirthDataForm: React.FC<{
       const cityData = City.getCitiesOfState(birthCountry, birthCounty)
         .find(city => city.name === birthCity);
       if (cityData) {
-        setCoordinates({ 
-          lat: Number(cityData.latitude), 
-          lng: Number(cityData.longitude) 
+        setCoordinates({
+          lat: Number(cityData.latitude),
+          lng: Number(cityData.longitude)
         });
       }
     }
@@ -122,13 +122,13 @@ const BirthDataForm: React.FC<{
         hour: birthHour!.getHours(),
         minute: birthHour!.getMinutes()
       };
-      
+
       // Get the actual location names for display
       const country = Country.getCountryByCode(birthCountry)?.name || birthCountry;
       const state = State.getStateByCodeAndCountry(birthCounty, birthCountry)?.name || birthCounty;
       const cities = City.getCitiesOfState(birthCountry, birthCounty);
       const city = cities.find(c => c.name === birthCity)?.name || birthCity;
-      
+
       // Pass both the API payload and display data separately
       const result = await calculatePlanetPositions('ro', payload);
       setResult(result);
@@ -158,11 +158,11 @@ const BirthDataForm: React.FC<{
         />
         {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
       </div>
-      
+
       <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthDate">Birth Date</label>
         <Flatpickr
-          value={birthDate}
+          value={birthDate!}
           onChange={(date) => setBirthDate(date[0])}
           options={{
             dateFormat: "d/m/Y",
@@ -179,7 +179,7 @@ const BirthDataForm: React.FC<{
       <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthHour">Birth Hour</label>
         <Flatpickr
-          value={birthHour}
+          value={birthHour!}
           onChange={(date) => setBirthHour(date[0])}
           options={{
             enableTime: true,
@@ -313,15 +313,15 @@ const BirthDataForm: React.FC<{
       >
         {isCalculating ? (
           <>
-            <svg 
+            <svg
               className="animate-spin"
-              width="16" 
-              height="16" 
-              viewBox="0 0 16 16" 
-              fill="none" 
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="2" strokeDasharray="22" strokeDashoffset="0"/>
+              <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="2" strokeDasharray="22" strokeDashoffset="0" />
             </svg>
             Calculating...
           </>
