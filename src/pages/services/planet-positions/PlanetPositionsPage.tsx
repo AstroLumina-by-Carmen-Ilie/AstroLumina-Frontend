@@ -4,6 +4,7 @@ import { ReadingResult } from '../../../types/planetPositions';
 import astralChartSvg from '../../../assets/astral-chart.svg';
 import BirthDataForm from './BirthDataForm';
 import ResultsDisplay from './ResultsDisplay';
+import { useLoading } from '../../../contexts/LoadingContext';
 
 const PlanetPositionsPage: React.FC = () => {
   const [result, setResult] = useState<ReadingResult | null>(null);
@@ -14,17 +15,17 @@ const PlanetPositionsPage: React.FC = () => {
     location: string;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { startLoading, stopLoading } = useLoading();
 
-  // Simplificăm complet abordarea, eliminând dependența de LoadingContext
+  // Loading effect
   useEffect(() => {
-    // Simulăm un loading inițial
+    startLoading();
     const timer = setTimeout(() => {
+      stopLoading();
       setIsLoading(false);
     }, 1500);
-    
-    // Cleanup
     return () => clearTimeout(timer);
-  }, []); // Rulăm doar la montare
+  }, []);
 
   // Dacă este în starea de loading, nu afișăm nimic încă
   if (isLoading) {
