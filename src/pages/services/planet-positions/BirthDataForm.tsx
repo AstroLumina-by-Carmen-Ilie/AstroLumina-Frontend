@@ -38,177 +38,177 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Initialize country options once on mount
-  useEffect(() => {
-    try {
-      const countries = Country.getAllCountries().map(country => ({
-        value: country.isoCode,
-        label: country.name
-      }));
+  // // Initialize country options once on mount
+  // useEffect(() => {
+  //   try {
+  //     const countries = Country.getAllCountries().map(country => ({
+  //       value: country.isoCode,
+  //       label: country.name
+  //     }));
 
-      setOptions(prev => ({
-        ...prev,
-        countryOptions: [{ value: '', label: 'Select ...' }, ...countries]
-      }));
+  //     setOptions(prev => ({
+  //       ...prev,
+  //       countryOptions: [{ value: '', label: 'Select ...' }, ...countries]
+  //     }));
 
-      // Set Romania as default - but don't cascade updates yet
-      const romania = countries.find(c => c.label === 'Romania');
-      if (romania) {
-        setFormState(prev => ({
-          ...prev,
-          birthCountry: romania.value
-        }));
-      }
-    } catch (error) {
-      console.error('Error initializing countries:', error);
-    }
-  }, []);
+  //     // Set Romania as default - but don't cascade updates yet
+  //     const romania = countries.find(c => c.label === 'Romania');
+  //     if (romania) {
+  //       setFormState(prev => ({
+  //         ...prev,
+  //         birthCountry: romania.value
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     console.error('Error initializing countries:', error);
+  //   }
+  // }, []);
 
-  // Handle country change - load states
-  useEffect(() => {
-    if (!formState.birthCountry) return;
+  // // Handle country change - load states
+  // useEffect(() => {
+  //   if (!formState.birthCountry) return;
 
-    try {
-      const states = State.getStatesOfCountry(formState.birthCountry).map(state => ({
-        value: state.isoCode,
-        label: state.name.replace(/ County$| Province$| Voivodeship$| District$/, '')
-      }));
+  //   try {
+  //     const states = State.getStatesOfCountry(formState.birthCountry).map(state => ({
+  //       value: state.isoCode,
+  //       label: state.name.replace(/ County$| Province$| Voivodeship$| District$/, '')
+  //     }));
 
-      setOptions(prev => ({
-        ...prev,
-        stateOptions: [{ value: '', label: 'Select ...' }, ...states],
-        cityOptions: [{ value: '', label: 'Select ...' }]
-      }));
+  //     setOptions(prev => ({
+  //       ...prev,
+  //       stateOptions: [{ value: '', label: 'Select ...' }, ...states],
+  //       cityOptions: [{ value: '', label: 'Select ...' }]
+  //     }));
 
-      // Reset dependent fields
-      setFormState(prev => ({
-        ...prev,
-        birthCounty: '',
-        birthCity: '',
-        coordinates: null
-      }));
-    } catch (error) {
-      console.error('Error loading states:', error);
-    }
-  }, [formState.birthCountry]);
+  //     // Reset dependent fields
+  //     setFormState(prev => ({
+  //       ...prev,
+  //       birthCounty: '',
+  //       birthCity: '',
+  //       coordinates: null
+  //     }));
+  //   } catch (error) {
+  //     console.error('Error loading states:', error);
+  //   }
+  // }, [formState.birthCountry]);
 
-  // Combined handler for county and city changes to reduce cascading effects
-  const handleLocationChange = useCallback((field: string, value: string) => {
-    setFormState(prev => ({ ...prev, [field]: value }));
+  // // Combined handler for county and city changes to reduce cascading effects
+  // const handleLocationChange = useCallback((field: string, value: string) => {
+  //   setFormState(prev => ({ ...prev, [field]: value }));
 
-    // If changing county, load cities
-    if (field === 'birthCounty' && value) {
-      try {
-        const cities = City.getCitiesOfState(formState.birthCountry, value).map(city => ({
-          value: city.name,
-          label: city.name
-        }));
+  //   // If changing county, load cities
+  //   if (field === 'birthCounty' && value) {
+  //     try {
+  //       const cities = City.getCitiesOfState(formState.birthCountry, value).map(city => ({
+  //         value: city.name,
+  //         label: city.name
+  //       }));
 
-        setOptions(prev => ({
-          ...prev,
-          cityOptions: [{ value: '', label: 'Select ...' }, ...cities]
-        }));
+  //       setOptions(prev => ({
+  //         ...prev,
+  //         cityOptions: [{ value: '', label: 'Select ...' }, ...cities]
+  //       }));
 
-        // Reset city
-        setFormState(prev => ({
-          ...prev,
-          birthCity: '',
-          coordinates: null
-        }));
-      } catch (error) {
-        console.error('Error loading cities:', error);
-      }
-    }
+  //       // Reset city
+  //       setFormState(prev => ({
+  //         ...prev,
+  //         birthCity: '',
+  //         coordinates: null
+  //       }));
+  //     } catch (error) {
+  //       console.error('Error loading cities:', error);
+  //     }
+  //   }
 
-    // If changing city, set coordinates
-    if (field === 'birthCity' && value) {
-      try {
-        const cityData = City.getCitiesOfState(formState.birthCountry, formState.birthCounty)
-          .find(city => city.name === value);
+  //   // If changing city, set coordinates
+  //   if (field === 'birthCity' && value) {
+  //     try {
+  //       const cityData = City.getCitiesOfState(formState.birthCountry, formState.birthCounty)
+  //         .find(city => city.name === value);
 
-        if (cityData) {
-          setFormState(prev => ({
-            ...prev,
-            coordinates: {
-              lat: Number(cityData.latitude),
-              lng: Number(cityData.longitude)
-            }
-          }));
-        }
-      } catch (error) {
-        console.error('Error setting coordinates:', error);
-      }
-    }
-  }, [formState.birthCountry, formState.birthCounty]);
+  //       if (cityData) {
+  //         setFormState(prev => ({
+  //           ...prev,
+  //           coordinates: {
+  //             lat: Number(cityData.latitude),
+  //             lng: Number(cityData.longitude)
+  //           }
+  //         }));
+  //       }
+  //     } catch (error) {
+  //       console.error('Error setting coordinates:', error);
+  //     }
+  //   }
+  // }, [formState.birthCountry, formState.birthCounty]);
 
-  // Validate all inputs
-  const validateInputs = () => {
-    const newErrors: Record<string, string> = {};
+  // // Validate all inputs
+  // const validateInputs = () => {
+  //   const newErrors: Record<string, string> = {};
 
-    if (!formState.fullName.trim()) newErrors.fullName = 'Full Name is required';
-    if (!formState.birthDate) newErrors.birthDate = 'Birth Date is required';
-    if (!formState.birthHour) newErrors.birthHour = 'Birth Hour is required';
-    if (!formState.birthCountry) newErrors.birthCountry = 'Birth Country is required';
-    if (!formState.birthCounty) newErrors.birthCounty = 'Birth County is required';
-    if (!formState.birthCity) newErrors.birthCity = 'Birth City is required';
+  //   if (!formState.fullName.trim()) newErrors.fullName = 'Full Name is required';
+  //   if (!formState.birthDate) newErrors.birthDate = 'Birth Date is required';
+  //   if (!formState.birthHour) newErrors.birthHour = 'Birth Hour is required';
+  //   if (!formState.birthCountry) newErrors.birthCountry = 'Birth Country is required';
+  //   if (!formState.birthCounty) newErrors.birthCounty = 'Birth County is required';
+  //   if (!formState.birthCity) newErrors.birthCity = 'Birth City is required';
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  //   setErrors(newErrors);
+  //   return Object.keys(newErrors).length === 0;
+  // };
 
-  // Handle calculation
-  const handleCalculatePositions = async () => {
-    const isValid = validateInputs();
-    if (!isValid) return;
+  // // Handle calculation
+  // const handleCalculatePositions = async () => {
+  //   const isValid = validateInputs();
+  //   if (!isValid) return;
 
-    setFormState(prev => ({ ...prev, isCalculating: true }));
+  //   setFormState(prev => ({ ...prev, isCalculating: true }));
 
-    try {
-      const { birthDate, birthHour, coordinates, fullName, birthCountry, birthCounty, birthCity } = formState;
+  //   try {
+  //     const { birthDate, birthHour, coordinates, fullName, birthCountry, birthCounty, birthCity } = formState;
 
-      if (!birthDate || !birthHour || !coordinates) {
-        throw new Error('Missing required data for calculation');
-      }
+  //     if (!birthDate || !birthHour || !coordinates) {
+  //       throw new Error('Missing required data for calculation');
+  //     }
 
-      const payload: ReadingPayload = {
-        longitude: coordinates.lng,
-        latitude: coordinates.lat,
-        year: birthDate.getFullYear(),
-        month: birthDate.getMonth() + 1,
-        day: birthDate.getDate(),
-        hour: birthHour.getHours(),
-        minute: birthHour.getMinutes()
-      };
+  //     const payload: ReadingPayload = {
+  //       longitude: coordinates.lng,
+  //       latitude: coordinates.lat,
+  //       year: birthDate.getFullYear(),
+  //       month: birthDate.getMonth() + 1,
+  //       day: birthDate.getDate(),
+  //       hour: birthHour.getHours(),
+  //       minute: birthHour.getMinutes()
+  //     };
 
-      // Get the actual location names for display
-      const country = Country.getCountryByCode(birthCountry)?.name || birthCountry;
-      const state = State.getStateByCodeAndCountry(birthCounty, birthCountry)?.name || birthCounty;
-      const cities = City.getCitiesOfState(birthCountry, birthCounty);
-      const city = cities.find(c => c.name === birthCity)?.name || birthCity;
+  //     // Get the actual location names for display
+  //     const country = Country.getCountryByCode(birthCountry)?.name || birthCountry;
+  //     const state = State.getStateByCodeAndCountry(birthCounty, birthCountry)?.name || birthCounty;
+  //     const cities = City.getCitiesOfState(birthCountry, birthCounty);
+  //     const city = cities.find(c => c.name === birthCity)?.name || birthCity;
 
-      // Calculate positions
-      const result = await calculatePlanetPositions('ro', payload);
+  //     // Calculate positions
+  //     const result = await calculatePlanetPositions('ro', payload);
 
-      // Update parent component state
-      // setResult(result);
-      // setUserInfo({
-      //   name: fullName,
-      //   birthDate: birthDate,
-      //   birthHour: birthHour,
-      //   location: `${city}, ${state}, ${country}`
-      // });
-    } catch (error) {
-      console.error('Error calculating positions:', error);
-      setErrors(prev => ({ ...prev, calculation: 'Failed to calculate positions. Please try again.' }));
-    } finally {
-      setFormState(prev => ({ ...prev, isCalculating: false }));
-    }
-  };
+  //     // Update parent component state
+  //     setResult(result);
+  //     setUserInfo({
+  //       name: fullName,
+  //       birthDate: birthDate,
+  //       birthHour: birthHour,
+  //       location: `${city}, ${state}, ${country}`
+  //     });
+  //   } catch (error) {
+  //     console.error('Error calculating positions:', error);
+  //     setErrors(prev => ({ ...prev, calculation: 'Failed to calculate positions. Please try again.' }));
+  //   } finally {
+  //     setFormState(prev => ({ ...prev, isCalculating: false }));
+  //   }
+  // };
 
-  // Simple form field change handler
-  const handleFormChange = (field: string, value: any) => {
-    setFormState(prev => ({ ...prev, [field]: value }));
-  };
+  // // Simple form field change handler
+  // const handleFormChange = (field: string, value: any) => {
+  //   setFormState(prev => ({ ...prev, [field]: value }));
+  // };
 
   return (
     <form className="space-y-6" onSubmit={(e) => {
