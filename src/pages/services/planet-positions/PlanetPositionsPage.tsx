@@ -26,9 +26,9 @@ const PlanetPositionsPage: React.FC  = () => {
   }, []);
 
   const renderContent = () => {
-    if (result && userInfo) {
-      return <ResultsDisplay result={result} userInfo={userInfo} />;
-    }
+    // if (result && userInfo) {
+    //   return <ResultsDisplay result={result} userInfo={userInfo} />;
+    // }
     return <BirthDataForm setResult={setResult} setUserInfo={setUserInfo} />;
   };
 
