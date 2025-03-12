@@ -211,8 +211,9 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
   };
 
   return (
-    <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleCalculatePositions(); }}>
-      <div className="mb-6">
+      <div>abc
+      <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleCalculatePositions(); }}>
+      {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="fullName">Full Name</label>
         <input
           type="text"
@@ -224,7 +225,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         />
         {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
       </div>
-{/* 
+
       <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthDate">Birth Date</label>
         <Flatpickr
@@ -259,7 +260,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           required
         />
         {errors.birthHour && <p className="text-red-500 text-sm mt-1">{errors.birthHour}</p>}
-      </div> */}
+      </div>
 
       <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthCountry">Birth Country</label>
@@ -336,8 +337,9 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         ) : (
           'Calculate Planet Positions'
         )}
-      </button>
+      </button> */}
     </form>
+    </div>
   );
 };
 
