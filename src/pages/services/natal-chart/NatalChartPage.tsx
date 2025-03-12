@@ -37,7 +37,11 @@ const NatalChartPage: React.FC = () => {
           setCurrentStep(4);
         }} onBack={handleBack} />;
       case 4:
-        return <FinalStep payload={payload!} userInfo={userInfo!} contactInfo={contactInfo!} paymentStatus={paymentStatus!} />;
+        return <FinalStep 
+          payload={payload!} 
+          userInfo={userInfo!} 
+          contactInfo={contactInfo!} 
+          paymentStatus={paymentStatus!} />;
       default:
         return null;
     }
@@ -104,7 +108,7 @@ const NatalChartPage: React.FC = () => {
                       />
                     </div>
                   </div>
-                  {/* {renderStep()} */}
+                  {renderStep()}
                 </div>
               </div>
             </div>
