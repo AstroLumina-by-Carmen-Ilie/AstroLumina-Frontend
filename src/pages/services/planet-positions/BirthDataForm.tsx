@@ -155,7 +155,8 @@ const BirthDataForm: React.FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+    {/* <form onSubmit={handleSubmit} className="space-y-6"> */}
       {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="fullName">Full Name</label>
         <input
