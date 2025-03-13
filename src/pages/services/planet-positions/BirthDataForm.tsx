@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Select from 'react-select';
 import { Country, State, City } from 'country-state-city';
 import Flatpickr from 'react-flatpickr';
@@ -6,101 +6,150 @@ import 'flatpickr/dist/themes/material_blue.css';
 import { FormErrors, LocationCoordinates, ReadingPayload, ReadingResult, SelectOption } from '../../../types/planetPositions';
 import { calculatePlanetPositions } from '../utilities/astrologicalCalculations';
 
-const BirthDataForm: React.FC<{ 
-  setResult: React.Dispatch<React.SetStateAction<ReadingResult | null>>; 
-  setUserInfo: React.Dispatch<React.SetStateAction<{ 
-    name: string; 
-    birthDate: Date; 
+interface BirthDataFormProps {
+  setResult: React.Dispatch<React.SetStateAction<ReadingResult | null>>;
+  setUserInfo: React.Dispatch<React.SetStateAction<{
+    name: string;
+    birthDate: Date;
     birthHour: Date;
-    location: string 
-  } | null>>; 
-}> = ({ setResult, setUserInfo }) => {
-  const [fullName, setFullName] = useState('');
+    location: string;
+  } | null>>;
+}
 
-  const [birthDate, setBirthDate] = useState<Date | null>(null);
-  const [birthHour, setBirthHour] = useState<Date | null>(null);
-  const [birthCountry, setBirthCountry] = useState('');
-  const [birthCounty, setBirthCounty] = useState('');
-  const [birthCity, setBirthCity] = useState('');
-  const [coordinates, setCoordinates] = useState<LocationCoordinates | null>(null);
+const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo }) => {
+  // Form state
+  const [formState, setFormState] = useState({
+    fullName: '',
+    birthDate: null as Date | null,
+    birthHour: null as Date | null,
+    birthCountry: '',
+    birthCounty: '',
+    birthCity: '',
+    coordinates: null as LocationCoordinates | null,
+    isCalculating: false
+  });
 
-  const [countryOptions, setCountryOptions] = useState<SelectOption[]>([{ value: '', label: 'Select ...' }]);
-  const [stateOptions, setStateOptions] = useState<SelectOption[]>([{ value: '', label: 'Select ...' }]);
-  const [cityOptions, setCityOptions] = useState<SelectOption[]>([{ value: '', label: 'Select ...' }]);
+  // Options state - separate from form state to reduce re-renders
+  const [options, setOptions] = useState({
+    countryOptions: [{ value: '', label: 'Select ...' }] as SelectOption[],
+    stateOptions: [{ value: '', label: 'Select ...' }] as SelectOption[],
+    cityOptions: [{ value: '', label: 'Select ...' }] as SelectOption[]
+  });
 
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const [isCalculating, setIsCalculating] = useState(false);
-  
+  // Initialize country options once on mount
   useEffect(() => {
-    const countries = Country.getAllCountries().map(country => ({
-      value: country.isoCode,
-      label: country.name
-    }));
-    // Set Romania as default
-    const romania = countries.find(c => c.label === 'Romania');
-    if (romania) {
-      setBirthCountry(romania.value);
-      const romanianStates = State.getStatesOfCountry(romania.value).map(state => ({
-        value: state.isoCode,
-        label: state.name
+    try {
+      const countries = Country.getAllCountries().map(country => ({
+        value: country.isoCode,
+        label: country.name
       }));
-      setStateOptions([{ value: '', label: 'Select ...' }, ...romanianStates]);
-      const romanianCities = City.getCitiesOfCountry(romania.value)?.map(city => ({
-        value: city.name,
-        label: city.name
-      })) || [];
-      setCityOptions([{ value: '', label: 'Select ...' }, ...romanianCities]);
+
+      setOptions(prev => ({
+        ...prev,
+        countryOptions: [{ value: '', label: 'Select ...' }, ...countries]
+      }));
+
+      // Set Romania as default - but don't cascade updates yet
+      const romania = countries.find(c => c.label === 'Romania');
+      if (romania) {
+        setFormState(prev => ({
+          ...prev,
+          birthCountry: romania.value
+        }));
+      }
+    } catch (error) {
+      console.error('Error initializing countries:', error);
     }
-    setCountryOptions([{ value: '', label: 'Select ...' }, ...countries]);
   }, []);
 
+  // Handle country change - load states
   useEffect(() => {
-    if (birthCountry) {
-      const states = State.getStatesOfCountry(birthCountry).map(state => ({
+    if (!formState.birthCountry) return;
+
+    try {
+      const states = State.getStatesOfCountry(formState.birthCountry).map(state => ({
         value: state.isoCode,
         label: state.name.replace(/ County$| Province$| Voivodeship$| District$/, '')
       }));
-      setStateOptions([{ value: '', label: 'Select ...' }, ...states]);
-      setBirthCounty('');
-      setBirthCity('');
-      setCityOptions([{ value: '', label: 'Select ...' }]);
-    }
-  }, [birthCountry]);
 
-  useEffect(() => {
-    if (birthCounty) {
-      const cities = City.getCitiesOfState(birthCountry, birthCounty).map(city => ({ 
-        value: city.name, 
-        label: city.name 
+      setOptions(prev => ({
+        ...prev,
+        stateOptions: [{ value: '', label: 'Select ...' }, ...states],
+        cityOptions: [{ value: '', label: 'Select ...' }]
       }));
-      setCityOptions([{ value: '', label: 'Select ...' }, ...cities]);
-      setBirthCity('');
-    }
-  }, [birthCounty, birthCountry]);
 
+      // Reset dependent fields
+      setFormState(prev => ({
+        ...prev,
+        birthCounty: '',
+        birthCity: '',
+        coordinates: null
+      }));
+    } catch (error) {
+      console.error('Error loading states:', error);
+    }
+  }, [formState.birthCountry]);
+
+  // Handle county change - load cities
   useEffect(() => {
-    if (birthCity) {
-      const cityData = City.getCitiesOfState(birthCountry, birthCounty)
-        .find(city => city.name === birthCity);
-      if (cityData) {
-        setCoordinates({ 
-          lat: Number(cityData.latitude), 
-          lng: Number(cityData.longitude) 
-        });
-      }
+    if (!formState.birthCounty || !formState.birthCountry) return;
+    
+    try {
+      const cities = City.getCitiesOfState(formState.birthCountry, formState.birthCounty).map(city => ({
+        value: city.name,
+        label: city.name
+      }));
+
+      setOptions(prev => ({
+        ...prev,
+        cityOptions: [{ value: '', label: 'Select ...' }, ...cities]
+      }));
+
+      // Reset city when county changes
+      setFormState(prev => ({
+        ...prev,
+        birthCity: '',
+        coordinates: null
+      }));
+    } catch (error) {
+      console.error('Error loading cities:', error);
     }
-  }, [birthCity, birthCountry, birthCounty]);
+  }, [formState.birthCounty, formState.birthCountry]);
 
-  const validateInputs = (): boolean => {
-    const newErrors: FormErrors = {};
+  // Handle city change - set coordinates
+  useEffect(() => {
+    if (!formState.birthCity || !formState.birthCounty || !formState.birthCountry) return;
+    
+    try {
+      const cityData = City.getCitiesOfState(formState.birthCountry, formState.birthCounty)
+        .find(city => city.name === formState.birthCity);
 
-    if (!fullName.trim()) newErrors.fullName = 'Full Name is required';
-    if (!birthDate) newErrors.birthDate = 'Birth Date is required';
-    if (!birthHour) newErrors.birthHour = 'Birth Hour is required';
-    if (!birthCountry) newErrors.birthCountry = 'Birth Country is required';
-    if (!birthCounty) newErrors.birthCounty = 'Birth County is required';
-    if (!birthCity) newErrors.birthCity = 'Birth City is required';
+      if (cityData) {
+        setFormState(prev => ({
+          ...prev,
+          coordinates: {
+            lat: Number(cityData.latitude),
+            lng: Number(cityData.longitude)
+          }
+        }));
+      }
+    } catch (error) {
+      console.error('Error setting coordinates:', error);
+    }
+  }, [formState.birthCity, formState.birthCounty, formState.birthCountry]);
+
+  // Validate all inputs
+  const validateInputs = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formState.fullName.trim()) newErrors.fullName = 'Full Name is required';
+    if (!formState.birthDate) newErrors.birthDate = 'Birth Date is required';
+    if (!formState.birthHour) newErrors.birthHour = 'Birth Hour is required';
+    if (!formState.birthCountry) newErrors.birthCountry = 'Birth Country is required';
+    if (!formState.birthCounty) newErrors.birthCounty = 'Birth County is required';
+    if (!formState.birthCity) newErrors.birthCity = 'Birth City is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -110,64 +159,78 @@ const BirthDataForm: React.FC<{
     const isValid = validateInputs();
     if (!isValid) return;
 
-    setIsCalculating(true);
-    // startLoading();
+    setFormState(prev => ({ ...prev, isCalculating: true }));
+
     try {
+      const { birthDate, birthHour, coordinates, fullName, birthCountry, birthCounty, birthCity } = formState;
+
+      if (!birthDate || !birthHour || !coordinates) {
+        throw new Error('Missing required data for calculation');
+      }
+
       const payload: ReadingPayload = {
-        longitude: coordinates!.lng,
-        latitude: coordinates!.lat,
-        year: birthDate!.getFullYear(),
-        month: birthDate!.getMonth() + 1,
-        day: birthDate!.getDate(),
-        hour: birthHour!.getHours(),
-        minute: birthHour!.getMinutes()
+        longitude: coordinates.lng,
+        latitude: coordinates.lat,
+        year: birthDate.getFullYear(),
+        month: birthDate.getMonth() + 1,
+        day: birthDate.getDate(),
+        hour: birthHour.getHours(),
+        minute: birthHour.getMinutes()
       };
-      
+
       // Get the actual location names for display
       const country = Country.getCountryByCode(birthCountry)?.name || birthCountry;
       const state = State.getStateByCodeAndCountry(birthCounty, birthCountry)?.name || birthCounty;
       const cities = City.getCitiesOfState(birthCountry, birthCounty);
       const city = cities.find(c => c.name === birthCity)?.name || birthCity;
-      
-      // Pass both the API payload and display data separately
+
+      // Calculate positions
       const result = await calculatePlanetPositions('ro', payload);
+
+      // Update parent component state
       setResult(result);
       setUserInfo({
         name: fullName,
-        birthDate: birthDate!,
-        birthHour: birthHour!,
+        birthDate: birthDate,
+        birthHour: birthHour,
         location: `${city}, ${state}, ${country}`
       });
+    } catch (error) {
+      console.error('Error calculating positions:', error);
+      setErrors(prev => ({ ...prev, calculation: 'Failed to calculate positions. Please try again.' }));
     } finally {
-      // stopLoading();
-      setIsCalculating(false);
+      setFormState(prev => ({ ...prev, isCalculating: false }));
     }
   };
 
+  // Simple form field change handler
+  const handleFormChange = (field: string, value: any) => {
+    setFormState(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <form className="space-y-6">
+    <div className="space-y-6">
       <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="fullName">Full Name</label>
         <input
           type="text"
           id="fullName"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          value={formState.fullName}
+          onChange={(e) => handleFormChange('fullName', e.target.value)}
           required
         />
         {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
       </div>
-      
+
       <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthDate">Birth Date</label>
         <Flatpickr
-          value={birthDate}
-          onChange={(date) => setBirthDate(date[0])}
+          value={formState.birthDate || ''}
+          onChange={(date) => handleFormChange('birthDate', date[0])}
           options={{
             dateFormat: "d/m/Y",
             allowInput: true,
-            onClose: (selectedDates) => setBirthDate(selectedDates[0]),
           }}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           placeholder="Select date..."
@@ -179,8 +242,8 @@ const BirthDataForm: React.FC<{
       <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthHour">Birth Hour</label>
         <Flatpickr
-          value={birthHour}
-          onChange={(date) => setBirthHour(date[0])}
+          value={formState.birthHour || ''}
+          onChange={(date) => handleFormChange('birthHour', date[0])}
           options={{
             enableTime: true,
             noCalendar: true,
@@ -188,7 +251,6 @@ const BirthDataForm: React.FC<{
             time_24hr: true,
             allowInput: true,
             minuteIncrement: 1,
-            onClose: (selectedDates) => setBirthHour(selectedDates[0]),
           }}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           placeholder="Select time..."
@@ -201,11 +263,11 @@ const BirthDataForm: React.FC<{
         <label className="block text-gray-800 mb-2" htmlFor="birthCountry">Birth Country</label>
         <Select
           id="birthCountry"
-          options={countryOptions}
-          value={countryOptions.find(option => option.value === birthCountry)}
-          onChange={(option) => option && setBirthCountry(option.value)}
-          className="w-full"
-          classNamePrefix="select"
+          options={options.countryOptions}
+          value={options.countryOptions.find(option => option.value === formState.birthCountry) || null}
+          onChange={(option) => handleFormChange('birthCountry', option?.value || '')}
+          className="react-select-container"
+          classNamePrefix="react-select"
           styles={{
             control: (base) => ({
               ...base,
@@ -224,19 +286,23 @@ const BirthDataForm: React.FC<{
               }
             })
           }}
+          placeholder="Select country..."
+          isSearchable
+          required
         />
         {errors.birthCountry && <p className="text-red-500 text-sm mt-1">{errors.birthCountry}</p>}
       </div>
 
       <div className="mb-6">
-        <label className="block text-gray-800 mb-2" htmlFor="birthCounty">Birth County</label>
+        <label className="block text-gray-800 mb-2" htmlFor="birthCounty">Birth County/State</label>
         <Select
           id="birthCounty"
-          options={stateOptions}
-          value={stateOptions.find(option => option.value === birthCounty)}
-          onChange={(option) => option && setBirthCounty(option.value)}
-          className="w-full"
-          classNamePrefix="select"
+          options={options.stateOptions}
+          value={options.stateOptions.find(option => option.value === formState.birthCounty) || null}
+          // TODO problema la linia de jos pe iPhone
+          onChange={(option) => handleFormChange('birthCounty', option?.value || '')}
+          className="react-select-container"
+          classNamePrefix="react-select"
           styles={{
             control: (base) => ({
               ...base,
@@ -255,6 +321,10 @@ const BirthDataForm: React.FC<{
               }
             })
           }}
+          placeholder="Select county/state..."
+          isSearchable
+          isDisabled={!formState.birthCountry}
+          required
         />
         {errors.birthCounty && <p className="text-red-500 text-sm mt-1">{errors.birthCounty}</p>}
       </div>
@@ -263,11 +333,12 @@ const BirthDataForm: React.FC<{
         <label className="block text-gray-800 mb-2" htmlFor="birthCity">Birth City</label>
         <Select
           id="birthCity"
-          options={cityOptions}
-          value={cityOptions.find(option => option.value === birthCity)}
-          onChange={(option) => option && setBirthCity(option.value)}
-          className="w-full"
-          classNamePrefix="select"
+          options={options.cityOptions}
+          value={options.cityOptions.find(option => option.value === formState.birthCity) || null}
+          // TODO problema la linia de jos pe iPhone
+          onChange={(option) => handleFormChange('birthCity', option?.value || '')}
+          className="react-select-container"
+          classNamePrefix="react-select"
           styles={{
             control: (base) => ({
               ...base,
@@ -286,50 +357,46 @@ const BirthDataForm: React.FC<{
               }
             })
           }}
+          placeholder="Select city..."
+          isSearchable
+          isDisabled={!formState.birthCounty}
+          required
         />
         {errors.birthCity && <p className="text-red-500 text-sm mt-1">{errors.birthCity}</p>}
       </div>
 
+      {errors.calculation && (
+        <div className="p-3 bg-red-100 text-red-700 rounded-lg mb-6">
+          {errors.calculation}
+        </div>
+      )}
+
       <button
+        type="button"
+        className="w-full py-3 px-6 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center"
+        disabled={formState.isCalculating}
+        // TODO problema la linia de jos pe iPhone
         onClick={handleCalculatePositions}
-        className="calculate-positions-btn hover:bg-amber-300 transition-colors duration-300 w-full"
-        style={{
-          marginTop: '20px',
-          padding: '12px 20px',
-          backgroundColor: '#FFD700',
-          color: '#1a1a1a',
-          border: '1px solid #FFD700',
-          borderRadius: '4px',
-          cursor: isCalculating ? 'not-allowed' : 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          fontWeight: '500',
-          boxShadow: '0 2px 4px rgba(255, 215, 0, 0.3)',
-          opacity: isCalculating ? 0.7 : 1
-        }}
-        disabled={isCalculating}
       >
-        {isCalculating ? (
+        {formState.isCalculating ? (
           <>
-            <svg 
+            <svg
               className="animate-spin"
-              width="16" 
-              height="16" 
-              viewBox="0 0 16 16" 
-              fill="none" 
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="2" strokeDasharray="22" strokeDashoffset="0"/>
+              <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="2" strokeDasharray="22" strokeDashoffset="0" />
             </svg>
-            Calculating...
+            <span className="ml-2">Calculating...</span>
           </>
         ) : (
-          "Calculate Positions"
+          'Calculate Planet Positions'
         )}
       </button>
-    </form>
+    </div>
   );
 };
 
