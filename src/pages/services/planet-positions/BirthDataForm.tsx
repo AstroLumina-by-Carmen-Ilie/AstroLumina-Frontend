@@ -145,7 +145,7 @@ const BirthDataForm: React.FC<{
   };
 
   return (
-    <form className="space-y-6">
+    <form className="space-y-6" onSubmit={e => e.preventDefault()}>
       <div className="mb-6">
         abc
       </div>
