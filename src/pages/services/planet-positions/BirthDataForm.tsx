@@ -369,7 +369,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         </div>
       )}
 
-      <button
+      {/* <button
         type="button"
         className="w-full py-3 px-6 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center"
         disabled={formState.isCalculating}
@@ -392,7 +392,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         ) : (
           'Calculate Planet Positions'
         )}
-      </button>
+      </button> */}
     </div>
   );
 };
