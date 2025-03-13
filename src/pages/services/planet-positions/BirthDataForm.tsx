@@ -297,7 +297,7 @@ const BirthDataForm: React.FC<{
         {errors.birthCity && <p className="text-red-500 text-sm mt-1">{errors.birthCity}</p>}
       </div> */}
 
-      <button
+      {/* <button
         onClick={handleCalculatePositions}
         className="calculate-positions-btn hover:bg-amber-300 transition-colors duration-300 w-full"
         style={{
@@ -335,7 +335,7 @@ const BirthDataForm: React.FC<{
         ) : (
           "Calculate Positions"
         )}
-      </button>
+      </button> */}
     </form>
   );
 };
