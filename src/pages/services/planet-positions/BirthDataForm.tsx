@@ -38,59 +38,59 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Initialize country options once on mount
-  useEffect(() => {
-    try {
-      const countries = Country.getAllCountries().map(country => ({
-        value: country.isoCode,
-        label: country.name
-      }));
+  // // Initialize country options once on mount
+  // useEffect(() => {
+  //   try {
+  //     const countries = Country.getAllCountries().map(country => ({
+  //       value: country.isoCode,
+  //       label: country.name
+  //     }));
 
-      setOptions(prev => ({
-        ...prev,
-        countryOptions: [{ value: '', label: 'Select ...' }, ...countries]
-      }));
+  //     setOptions(prev => ({
+  //       ...prev,
+  //       countryOptions: [{ value: '', label: 'Select ...' }, ...countries]
+  //     }));
 
-      // Set Romania as default - but don't cascade updates yet
-      const romania = countries.find(c => c.label === 'Romania');
-      if (romania) {
-        setFormState(prev => ({
-          ...prev,
-          birthCountry: romania.value
-        }));
-      }
-    } catch (error) {
-      console.error('Error initializing countries:', error);
-    }
-  }, []);
+  //     // Set Romania as default - but don't cascade updates yet
+  //     const romania = countries.find(c => c.label === 'Romania');
+  //     if (romania) {
+  //       setFormState(prev => ({
+  //         ...prev,
+  //         birthCountry: romania.value
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     console.error('Error initializing countries:', error);
+  //   }
+  // }, []);
 
-  // Handle country change - load states
-  useEffect(() => {
-    if (!formState.birthCountry) return;
+  // // Handle country change - load states
+  // useEffect(() => {
+  //   if (!formState.birthCountry) return;
 
-    try {
-      const states = State.getStatesOfCountry(formState.birthCountry).map(state => ({
-        value: state.isoCode,
-        label: state.name.replace(/ County$| Province$| Voivodeship$| District$/, '')
-      }));
+  //   try {
+  //     const states = State.getStatesOfCountry(formState.birthCountry).map(state => ({
+  //       value: state.isoCode,
+  //       label: state.name.replace(/ County$| Province$| Voivodeship$| District$/, '')
+  //     }));
 
-      setOptions(prev => ({
-        ...prev,
-        stateOptions: [{ value: '', label: 'Select ...' }, ...states],
-        cityOptions: [{ value: '', label: 'Select ...' }]
-      }));
+  //     setOptions(prev => ({
+  //       ...prev,
+  //       stateOptions: [{ value: '', label: 'Select ...' }, ...states],
+  //       cityOptions: [{ value: '', label: 'Select ...' }]
+  //     }));
 
-      // Reset dependent fields
-      setFormState(prev => ({
-        ...prev,
-        birthCounty: '',
-        birthCity: '',
-        coordinates: null
-      }));
-    } catch (error) {
-      console.error('Error loading states:', error);
-    }
-  }, [formState.birthCountry]);
+  //     // Reset dependent fields
+  //     setFormState(prev => ({
+  //       ...prev,
+  //       birthCounty: '',
+  //       birthCity: '',
+  //       coordinates: null
+  //     }));
+  //   } catch (error) {
+  //     console.error('Error loading states:', error);
+  //   }
+  // }, [formState.birthCountry]);
 
   // Combined handler for county and city changes to reduce cascading effects
   const handleLocationChange = useCallback((field: string, value: string) => {
