@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { Country, State, City } from 'country-state-city';
 import Flatpickr from 'react-flatpickr';
@@ -6,178 +6,121 @@ import 'flatpickr/dist/themes/material_blue.css';
 import { FormErrors, LocationCoordinates, ReadingPayload, ReadingResult, SelectOption } from '../../../types/planetPositions';
 import { calculatePlanetPositions } from '../utilities/astrologicalCalculations';
 
-interface BirthDataFormProps {
+const BirthDataForm: React.FC<{
   setResult: React.Dispatch<React.SetStateAction<ReadingResult | null>>;
   setUserInfo: React.Dispatch<React.SetStateAction<{
     name: string;
     birthDate: Date;
     birthHour: Date;
-    location: string;
+    location: string
   } | null>>;
-}
+}> = ({ setResult, setUserInfo }) => {
+  const [fullName, setFullName] = useState('');
 
-const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo }) => {
-  // Form state
-  const [formState, setFormState] = useState({
-    fullName: '',
-    birthDate: null as Date | null,
-    birthHour: null as Date | null,
-    birthCountry: '',
-    birthCounty: '',
-    birthCity: '',
-    coordinates: null as LocationCoordinates | null,
-    isCalculating: false
-  });
+  const [birthDate, setBirthDate] = useState<Date | null>(null);
+  const [birthHour, setBirthHour] = useState<Date | null>(null);
+  const [birthCountry, setBirthCountry] = useState('');
+  const [birthCounty, setBirthCounty] = useState('');
+  const [birthCity, setBirthCity] = useState('');
+  const [coordinates, setCoordinates] = useState<LocationCoordinates | null>(null);
 
-  // Options state - separate from form state to reduce re-renders
-  const [options, setOptions] = useState({
-    countryOptions: [{ value: '', label: 'Select ...' }] as SelectOption[],
-    stateOptions: [{ value: '', label: 'Select ...' }] as SelectOption[],
-    cityOptions: [{ value: '', label: 'Select ...' }] as SelectOption[]
-  });
+  const [countryOptions, setCountryOptions] = useState<SelectOption[]>([{ value: '', label: 'Select ...' }]);
+  const [stateOptions, setStateOptions] = useState<SelectOption[]>([{ value: '', label: 'Select ...' }]);
+  const [cityOptions, setCityOptions] = useState<SelectOption[]>([{ value: '', label: 'Select ...' }]);
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
-  // // Initialize country options once on mount
+  const [isCalculating, setIsCalculating] = useState(false);
+
   // useEffect(() => {
-  //   try {
-  //     const countries = Country.getAllCountries().map(country => ({
-  //       value: country.isoCode,
-  //       label: country.name
+  //   const countries = Country.getAllCountries().map(country => ({
+  //     value: country.isoCode,
+  //     label: country.name
+  //   }));
+  //   // Set Romania as default
+  //   const romania = countries.find(c => c.label === 'Romania');
+  //   if (romania) {
+  //     setBirthCountry(romania.value);
+  //     const romanianStates = State.getStatesOfCountry(romania.value).map(state => ({
+  //       value: state.isoCode,
+  //       label: state.name
   //     }));
-
-  //     setOptions(prev => ({
-  //       ...prev,
-  //       countryOptions: [{ value: '', label: 'Select ...' }, ...countries]
-  //     }));
-
-  //     // Set Romania as default - but don't cascade updates yet
-  //     const romania = countries.find(c => c.label === 'Romania');
-  //     if (romania) {
-  //       setFormState(prev => ({
-  //         ...prev,
-  //         birthCountry: romania.value
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     console.error('Error initializing countries:', error);
+  //     setStateOptions([{ value: '', label: 'Select ...' }, ...romanianStates]);
+  //     const romanianCities = City.getCitiesOfCountry(romania.value)?.map(city => ({
+  //       value: city.name,
+  //       label: city.name
+  //     })) || [];
+  //     setCityOptions([{ value: '', label: 'Select ...' }, ...romanianCities]);
   //   }
+  //   setCountryOptions([{ value: '', label: 'Select ...' }, ...countries]);
   // }, []);
 
-  // // Handle country change - load states
   // useEffect(() => {
-  //   if (!formState.birthCountry) return;
-
-  //   try {
-  //     const states = State.getStatesOfCountry(formState.birthCountry).map(state => ({
+  //   if (birthCountry) {
+  //     const states = State.getStatesOfCountry(birthCountry).map(state => ({
   //       value: state.isoCode,
   //       label: state.name.replace(/ County$| Province$| Voivodeship$| District$/, '')
   //     }));
-
-  //     setOptions(prev => ({
-  //       ...prev,
-  //       stateOptions: [{ value: '', label: 'Select ...' }, ...states],
-  //       cityOptions: [{ value: '', label: 'Select ...' }]
-  //     }));
-
-  //     // Reset dependent fields
-  //     setFormState(prev => ({
-  //       ...prev,
-  //       birthCounty: '',
-  //       birthCity: '',
-  //       coordinates: null
-  //     }));
-  //   } catch (error) {
-  //     console.error('Error loading states:', error);
+  //     setStateOptions([{ value: '', label: 'Select ...' }, ...states]);
+  //     setBirthCounty('');
+  //     setBirthCity('');
+  //     setCityOptions([{ value: '', label: 'Select ...' }]);
   //   }
-  // }, [formState.birthCountry]);
+  // }, [birthCountry]);
 
-  // // Combined handler for county and city changes to reduce cascading effects
-  // const handleLocationChange = useCallback((field: string, value: string) => {
-  //   setFormState(prev => ({ ...prev, [field]: value }));
+  // useEffect(() => {
+  //   if (birthCounty) {
+  //     const cities = City.getCitiesOfState(birthCountry, birthCounty).map(city => ({ 
+  //       value: city.name, 
+  //       label: city.name 
+  //     }));
+  //     setCityOptions([{ value: '', label: 'Select ...' }, ...cities]);
+  //     setBirthCity('');
+  //   }
+  // }, [birthCounty, birthCountry]);
 
-  //   // If changing county, load cities
-  //   if (field === 'birthCounty' && value) {
-  //     try {
-  //       const cities = City.getCitiesOfState(formState.birthCountry, value).map(city => ({
-  //         value: city.name,
-  //         label: city.name
-  //       }));
-
-  //       setOptions(prev => ({
-  //         ...prev,
-  //         cityOptions: [{ value: '', label: 'Select ...' }, ...cities]
-  //       }));
-
-  //       // Reset city
-  //       setFormState(prev => ({
-  //         ...prev,
-  //         birthCity: '',
-  //         coordinates: null
-  //       }));
-  //     } catch (error) {
-  //       console.error('Error loading cities:', error);
+  // useEffect(() => {
+  //   if (birthCity) {
+  //     const cityData = City.getCitiesOfState(birthCountry, birthCounty)
+  //       .find(city => city.name === birthCity);
+  //     if (cityData) {
+  //       setCoordinates({ 
+  //         lat: Number(cityData.latitude), 
+  //         lng: Number(cityData.longitude) 
+  //       });
   //     }
   //   }
+  // }, [birthCity, birthCountry, birthCounty]);
 
-  //   // If changing city, set coordinates
-  //   if (field === 'birthCity' && value) {
-  //     try {
-  //       const cityData = City.getCitiesOfState(formState.birthCountry, formState.birthCounty)
-  //         .find(city => city.name === value);
+  const validateInputs = (): boolean => {
+    const newErrors: FormErrors = {};
 
-  //       if (cityData) {
-  //         setFormState(prev => ({
-  //           ...prev,
-  //           coordinates: {
-  //             lat: Number(cityData.latitude),
-  //             lng: Number(cityData.longitude)
-  //           }
-  //         }));
-  //       }
-  //     } catch (error) {
-  //       console.error('Error setting coordinates:', error);
-  //     }
-  //   }
-  // }, [formState.birthCountry, formState.birthCounty]);
-
-  // Validate all inputs
-  const validateInputs = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formState.fullName.trim()) newErrors.fullName = 'Full Name is required';
-    if (!formState.birthDate) newErrors.birthDate = 'Birth Date is required';
-    if (!formState.birthHour) newErrors.birthHour = 'Birth Hour is required';
-    if (!formState.birthCountry) newErrors.birthCountry = 'Birth Country is required';
-    if (!formState.birthCounty) newErrors.birthCounty = 'Birth County is required';
-    if (!formState.birthCity) newErrors.birthCity = 'Birth City is required';
+    if (!fullName.trim()) newErrors.fullName = 'Full Name is required';
+    if (!birthDate) newErrors.birthDate = 'Birth Date is required';
+    if (!birthHour) newErrors.birthHour = 'Birth Hour is required';
+    if (!birthCountry) newErrors.birthCountry = 'Birth Country is required';
+    if (!birthCounty) newErrors.birthCounty = 'Birth County is required';
+    if (!birthCity) newErrors.birthCity = 'Birth City is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle calculation
   const handleCalculatePositions = async () => {
     const isValid = validateInputs();
     if (!isValid) return;
 
-    setFormState(prev => ({ ...prev, isCalculating: true }));
-
+    setIsCalculating(true);
+    // startLoading();
     try {
-      const { birthDate, birthHour, coordinates, fullName, birthCountry, birthCounty, birthCity } = formState;
-
-      if (!birthDate || !birthHour || !coordinates) {
-        throw new Error('Missing required data for calculation');
-      }
-
       const payload: ReadingPayload = {
-        longitude: coordinates.lng,
-        latitude: coordinates.lat,
-        year: birthDate.getFullYear(),
-        month: birthDate.getMonth() + 1,
-        day: birthDate.getDate(),
-        hour: birthHour.getHours(),
-        minute: birthHour.getMinutes()
+        longitude: coordinates!.lng,
+        latitude: coordinates!.lat,
+        year: birthDate!.getFullYear(),
+        month: birthDate!.getMonth() + 1,
+        day: birthDate!.getDate(),
+        hour: birthHour!.getHours(),
+        minute: birthHour!.getMinutes()
       };
 
       // Get the actual location names for display
@@ -186,44 +129,35 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
       const cities = City.getCitiesOfState(birthCountry, birthCounty);
       const city = cities.find(c => c.name === birthCity)?.name || birthCity;
 
-      // Calculate positions
+      // Pass both the API payload and display data separately
       const result = await calculatePlanetPositions('ro', payload);
-
-      // Update parent component state
       setResult(result);
       setUserInfo({
         name: fullName,
-        birthDate: birthDate,
-        birthHour: birthHour,
+        birthDate: birthDate!,
+        birthHour: birthHour!,
         location: `${city}, ${state}, ${country}`
       });
-    } catch (error) {
-      console.error('Error calculating positions:', error);
-      setErrors(prev => ({ ...prev, calculation: 'Failed to calculate positions. Please try again.' }));
     } finally {
-      setFormState(prev => ({ ...prev, isCalculating: false }));
+      // stopLoading();
+      setIsCalculating(false);
     }
   };
 
-  // // Simple form field change handler
-  // const handleFormChange = (field: string, value: any) => {
-  //   setFormState(prev => ({ ...prev, [field]: value }));
-  // };
-
   return (
-    <form className="space-y-6" onSubmit={(e) => {
-      e.preventDefault();
-      handleCalculatePositions();
-    }}>
-      <div>abc</div>
+    <form className="space-y-6">
+      <div className="mb-6">
+        abc
+      </div>
+
       {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="fullName">Full Name</label>
         <input
           type="text"
           id="fullName"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-          value={formState.fullName}
-          onChange={(e) => handleFormChange('fullName', e.target.value)}
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
           required
         />
         {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
@@ -232,11 +166,12 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
       {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthDate">Birth Date</label>
         <Flatpickr
-          value={formState.birthDate || ''}
-          onChange={(date) => handleFormChange('birthDate', date[0])}
+          value={birthDate!}
+          onChange={(date) => setBirthDate(date[0])}
           options={{
             dateFormat: "d/m/Y",
             allowInput: true,
+            onClose: (selectedDates) => setBirthDate(selectedDates[0]),
           }}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           placeholder="Select date..."
@@ -248,8 +183,8 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
       {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="birthHour">Birth Hour</label>
         <Flatpickr
-          value={formState.birthHour || ''}
-          onChange={(date) => handleFormChange('birthHour', date[0])}
+          value={birthHour!}
+          onChange={(date) => setBirthHour(date[0])}
           options={{
             enableTime: true,
             noCalendar: true,
@@ -257,6 +192,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
             time_24hr: true,
             allowInput: true,
             minuteIncrement: 1,
+            onClose: (selectedDates) => setBirthHour(selectedDates[0]),
           }}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           placeholder="Select time..."
@@ -269,29 +205,60 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         <label className="block text-gray-800 mb-2" htmlFor="birthCountry">Birth Country</label>
         <Select
           id="birthCountry"
-          options={options.countryOptions}
-          value={options.countryOptions.find(option => option.value === formState.birthCountry) || null}
-          onChange={(option) => handleFormChange('birthCountry', option?.value || '')}
-          className="react-select-container"
-          classNamePrefix="react-select"
-          placeholder="Select country..."
-          isSearchable
+          options={countryOptions}
+          value={countryOptions.find(option => option.value === birthCountry)}
+          onChange={(option) => option && setBirthCountry(option.value)}
+          className="w-full"
+          classNamePrefix="select"
+          styles={{
+            control: (base) => ({
+              ...base,
+              borderColor: '#d1d5db',
+              borderRadius: '0.5rem',
+              '&:hover': {
+                borderColor: '#d1d5db'
+              }
+            }),
+            option: (base, state) => ({
+              ...base,
+              backgroundColor: state.isFocused ? '#fde68a' : 'white',
+              color: '#1f2937',
+              '&:hover': {
+                backgroundColor: '#fde68a'
+              }
+            })
+          }}
         />
         {errors.birthCountry && <p className="text-red-500 text-sm mt-1">{errors.birthCountry}</p>}
       </div> */}
 
       {/* <div className="mb-6">
-        <label className="block text-gray-800 mb-2" htmlFor="birthCounty">Birth County/State</label>
+        <label className="block text-gray-800 mb-2" htmlFor="birthCounty">Birth County</label>
         <Select
           id="birthCounty"
-          options={options.stateOptions}
-          value={options.stateOptions.find(option => option.value === formState.birthCounty) || null}
-          onChange={(option) => handleLocationChange('birthCounty', option?.value || '')}
-          className="react-select-container"
-          classNamePrefix="react-select"
-          placeholder="Select county/state..."
-          isSearchable
-          isDisabled={!formState.birthCountry}
+          options={stateOptions}
+          value={stateOptions.find(option => option.value === birthCounty)}
+          onChange={(option) => option && setBirthCounty(option.value)}
+          className="w-full"
+          classNamePrefix="select"
+          styles={{
+            control: (base) => ({
+              ...base,
+              borderColor: '#d1d5db',
+              borderRadius: '0.5rem',
+              '&:hover': {
+                borderColor: '#d1d5db'
+              }
+            }),
+            option: (base, state) => ({
+              ...base,
+              backgroundColor: state.isFocused ? '#fde68a' : 'white',
+              color: '#1f2937',
+              '&:hover': {
+                backgroundColor: '#fde68a'
+              }
+            })
+          }}
         />
         {errors.birthCounty && <p className="text-red-500 text-sm mt-1">{errors.birthCounty}</p>}
       </div> */}
@@ -300,30 +267,55 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         <label className="block text-gray-800 mb-2" htmlFor="birthCity">Birth City</label>
         <Select
           id="birthCity"
-          options={options.cityOptions}
-          value={options.cityOptions.find(option => option.value === formState.birthCity) || null}
-          onChange={(option) => handleLocationChange('birthCity', option?.value || '')}
-          className="react-select-container"
-          classNamePrefix="react-select"
-          placeholder="Select city..."
-          isSearchable
-          isDisabled={!formState.birthCounty}
+          options={cityOptions}
+          value={cityOptions.find(option => option.value === birthCity)}
+          onChange={(option) => option && setBirthCity(option.value)}
+          className="w-full"
+          classNamePrefix="select"
+          styles={{
+            control: (base) => ({
+              ...base,
+              borderColor: '#d1d5db',
+              borderRadius: '0.5rem',
+              '&:hover': {
+                borderColor: '#d1d5db'
+              }
+            }),
+            option: (base, state) => ({
+              ...base,
+              backgroundColor: state.isFocused ? '#fde68a' : 'white',
+              color: '#1f2937',
+              '&:hover': {
+                backgroundColor: '#fde68a'
+              }
+            })
+          }}
         />
         {errors.birthCity && <p className="text-red-500 text-sm mt-1">{errors.birthCity}</p>}
       </div> */}
 
-      {/* {errors.calculation && (
-        <div className="p-3 bg-red-100 text-red-700 rounded-lg mb-6">
-          {errors.calculation}
-        </div>
-      )} */}
-
-      {/* <button
-        type="submit"
-        className="w-full py-3 px-6 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center"
-        disabled={formState.isCalculating}
+      <button
+        onClick={handleCalculatePositions}
+        className="calculate-positions-btn hover:bg-amber-300 transition-colors duration-300 w-full"
+        style={{
+          marginTop: '20px',
+          padding: '12px 20px',
+          backgroundColor: '#FFD700',
+          color: '#1a1a1a',
+          border: '1px solid #FFD700',
+          borderRadius: '4px',
+          cursor: isCalculating ? 'not-allowed' : 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          fontWeight: '500',
+          boxShadow: '0 2px 4px rgba(255, 215, 0, 0.3)',
+          opacity: isCalculating ? 0.7 : 1
+        }}
+        disabled={isCalculating}
       >
-        {formState.isCalculating ? (
+        {isCalculating ? (
           <>
             <svg
               className="animate-spin"
@@ -335,12 +327,12 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
             >
               <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="2" strokeDasharray="22" strokeDashoffset="0" />
             </svg>
-            <span className="ml-2">Calculating...</span>
+            Calculating...
           </>
         ) : (
-          'Calculate Planet Positions'
+          "Calculate Positions"
         )}
-      </button> */}
+      </button>
     </form>
   );
 };
