@@ -107,9 +107,6 @@ const BirthDataForm: React.FC<{
   };
 
   const handleCalculatePositions = async () => {
-    const isValid = validateInputs();
-    if (!isValid) return;
-
     setIsCalculating(true);
     // startLoading();
     try {
@@ -144,15 +141,21 @@ const BirthDataForm: React.FC<{
     }
   };
 
-  return (
-    <form
-      onSubmit={e => e.preventDefault()}
-      className="space-y-6"
-    >
-      <div className="mb-6">
-        abc
-      </div>
+  const handleFormSubmit = async () => {
+    await handleCalculatePositions();
+  };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const isValid = validateInputs();
+    if (!isValid) return;
+
+    handleFormSubmit();
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
       {/* <div className="mb-6">
         <label className="block text-gray-800 mb-2" htmlFor="fullName">Full Name</label>
         <input
@@ -298,7 +301,8 @@ const BirthDataForm: React.FC<{
       </div> */}
 
       {/* <button
-        onClick={handleCalculatePositions}
+        // onClick={handleCalculatePositions}
+        type="submit"
         className="calculate-positions-btn hover:bg-amber-300 transition-colors duration-300 w-full"
         style={{
           marginTop: '20px',
