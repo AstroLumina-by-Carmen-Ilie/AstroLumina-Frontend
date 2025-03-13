@@ -92,117 +92,117 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
   //   }
   // }, [formState.birthCountry]);
 
-  // Combined handler for county and city changes to reduce cascading effects
-  const handleLocationChange = useCallback((field: string, value: string) => {
-    setFormState(prev => ({ ...prev, [field]: value }));
+  // // Combined handler for county and city changes to reduce cascading effects
+  // const handleLocationChange = useCallback((field: string, value: string) => {
+  //   setFormState(prev => ({ ...prev, [field]: value }));
 
-    // If changing county, load cities
-    if (field === 'birthCounty' && value) {
-      try {
-        const cities = City.getCitiesOfState(formState.birthCountry, value).map(city => ({
-          value: city.name,
-          label: city.name
-        }));
+  //   // If changing county, load cities
+  //   if (field === 'birthCounty' && value) {
+  //     try {
+  //       const cities = City.getCitiesOfState(formState.birthCountry, value).map(city => ({
+  //         value: city.name,
+  //         label: city.name
+  //       }));
 
-        setOptions(prev => ({
-          ...prev,
-          cityOptions: [{ value: '', label: 'Select ...' }, ...cities]
-        }));
+  //       setOptions(prev => ({
+  //         ...prev,
+  //         cityOptions: [{ value: '', label: 'Select ...' }, ...cities]
+  //       }));
 
-        // Reset city
-        setFormState(prev => ({
-          ...prev,
-          birthCity: '',
-          coordinates: null
-        }));
-      } catch (error) {
-        console.error('Error loading cities:', error);
-      }
-    }
-
-    // If changing city, set coordinates
-    if (field === 'birthCity' && value) {
-      try {
-        const cityData = City.getCitiesOfState(formState.birthCountry, formState.birthCounty)
-          .find(city => city.name === value);
-
-        if (cityData) {
-          setFormState(prev => ({
-            ...prev,
-            coordinates: {
-              lat: Number(cityData.latitude),
-              lng: Number(cityData.longitude)
-            }
-          }));
-        }
-      } catch (error) {
-        console.error('Error setting coordinates:', error);
-      }
-    }
-  }, [formState.birthCountry, formState.birthCounty]);
-
-  // // Validate all inputs
-  // const validateInputs = () => {
-  //   const newErrors: Record<string, string> = {};
-
-  //   if (!formState.fullName.trim()) newErrors.fullName = 'Full Name is required';
-  //   if (!formState.birthDate) newErrors.birthDate = 'Birth Date is required';
-  //   if (!formState.birthHour) newErrors.birthHour = 'Birth Hour is required';
-  //   if (!formState.birthCountry) newErrors.birthCountry = 'Birth Country is required';
-  //   if (!formState.birthCounty) newErrors.birthCounty = 'Birth County is required';
-  //   if (!formState.birthCity) newErrors.birthCity = 'Birth City is required';
-
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
-
-  // const handleCalculatePositions = async () => {
-  //   const isValid = validateInputs();
-  //   if (!isValid) return;
-
-  //   setFormState(prev => ({ ...prev, isCalculating: true }));
-
-  //   try {
-  //     const { birthDate, birthHour, coordinates, fullName, birthCountry, birthCounty, birthCity } = formState;
-
-  //     if (!birthDate || !birthHour || !coordinates) {
-  //       throw new Error('Missing required data for calculation');
+  //       // Reset city
+  //       setFormState(prev => ({
+  //         ...prev,
+  //         birthCity: '',
+  //         coordinates: null
+  //       }));
+  //     } catch (error) {
+  //       console.error('Error loading cities:', error);
   //     }
-
-  //     const payload: ReadingPayload = {
-  //       longitude: coordinates.lng,
-  //       latitude: coordinates.lat,
-  //       year: birthDate.getFullYear(),
-  //       month: birthDate.getMonth() + 1,
-  //       day: birthDate.getDate(),
-  //       hour: birthHour.getHours(),
-  //       minute: birthHour.getMinutes()
-  //     };
-
-  //     // Get the actual location names for display
-  //     const country = Country.getCountryByCode(birthCountry)?.name || birthCountry;
-  //     const state = State.getStateByCodeAndCountry(birthCounty, birthCountry)?.name || birthCounty;
-  //     const cities = City.getCitiesOfState(birthCountry, birthCounty);
-  //     const city = cities.find(c => c.name === birthCity)?.name || birthCity;
-
-  //     // Calculate positions
-  //     const result = await calculatePlanetPositions('ro', payload);
-
-  //     // Update parent component state
-  //     setResult(result);
-  //     setUserInfo({
-  //       name: fullName,
-  //       birthDate: birthDate,
-  //       birthHour: birthHour,
-  //       location: `${city}, ${state}, ${country}`
-  //     });
-  //   } catch (error) {
-  //     console.error('Error calculating positions:', error);
-  //     setErrors(prev => ({ ...prev, calculation: 'Failed to calculate positions. Please try again.' }));
-  //   } finally {
-  //     setFormState(prev => ({ ...prev, isCalculating: false }));
   //   }
-  // };
+
+  //   // If changing city, set coordinates
+  //   if (field === 'birthCity' && value) {
+  //     try {
+  //       const cityData = City.getCitiesOfState(formState.birthCountry, formState.birthCounty)
+  //         .find(city => city.name === value);
+
+  //       if (cityData) {
+  //         setFormState(prev => ({
+  //           ...prev,
+  //           coordinates: {
+  //             lat: Number(cityData.latitude),
+  //             lng: Number(cityData.longitude)
+  //           }
+  //         }));
+  //       }
+  //     } catch (error) {
+  //       console.error('Error setting coordinates:', error);
+  //     }
+  //   }
+  // }, [formState.birthCountry, formState.birthCounty]);
+
+  // Validate all inputs
+  const validateInputs = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formState.fullName.trim()) newErrors.fullName = 'Full Name is required';
+    if (!formState.birthDate) newErrors.birthDate = 'Birth Date is required';
+    if (!formState.birthHour) newErrors.birthHour = 'Birth Hour is required';
+    if (!formState.birthCountry) newErrors.birthCountry = 'Birth Country is required';
+    if (!formState.birthCounty) newErrors.birthCounty = 'Birth County is required';
+    if (!formState.birthCity) newErrors.birthCity = 'Birth City is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleCalculatePositions = async () => {
+    const isValid = validateInputs();
+    if (!isValid) return;
+
+    setFormState(prev => ({ ...prev, isCalculating: true }));
+
+    try {
+      const { birthDate, birthHour, coordinates, fullName, birthCountry, birthCounty, birthCity } = formState;
+
+      if (!birthDate || !birthHour || !coordinates) {
+        throw new Error('Missing required data for calculation');
+      }
+
+      const payload: ReadingPayload = {
+        longitude: coordinates.lng,
+        latitude: coordinates.lat,
+        year: birthDate.getFullYear(),
+        month: birthDate.getMonth() + 1,
+        day: birthDate.getDate(),
+        hour: birthHour.getHours(),
+        minute: birthHour.getMinutes()
+      };
+
+      // Get the actual location names for display
+      const country = Country.getCountryByCode(birthCountry)?.name || birthCountry;
+      const state = State.getStateByCodeAndCountry(birthCounty, birthCountry)?.name || birthCounty;
+      const cities = City.getCitiesOfState(birthCountry, birthCounty);
+      const city = cities.find(c => c.name === birthCity)?.name || birthCity;
+
+      // Calculate positions
+      const result = await calculatePlanetPositions('ro', payload);
+
+      // Update parent component state
+      setResult(result);
+      setUserInfo({
+        name: fullName,
+        birthDate: birthDate,
+        birthHour: birthHour,
+        location: `${city}, ${state}, ${country}`
+      });
+    } catch (error) {
+      console.error('Error calculating positions:', error);
+      setErrors(prev => ({ ...prev, calculation: 'Failed to calculate positions. Please try again.' }));
+    } finally {
+      setFormState(prev => ({ ...prev, isCalculating: false }));
+    }
+  };
 
   // Simple form field change handler
   const handleFormChange = (field: string, value: any) => {
@@ -300,7 +300,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           id="birthCounty"
           options={options.stateOptions}
           value={options.stateOptions.find(option => option.value === formState.birthCounty) || null}
-          onChange={(option) => handleLocationChange('birthCounty', option?.value || '')}
+          // onChange={(option) => handleLocationChange('birthCounty', option?.value || '')}
           className="react-select-container"
           classNamePrefix="react-select"
           styles={{
@@ -359,6 +359,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           placeholder="Select city..."
           isSearchable
           isDisabled={!formState.birthCounty}
+          required
         />
         {errors.birthCity && <p className="text-red-500 text-sm mt-1">{errors.birthCity}</p>}
       </div>
@@ -373,7 +374,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         type="button"
         className="w-full py-3 px-6 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center"
         disabled={formState.isCalculating}
-        // onClick={handleCalculatePositions}
+        onClick={handleCalculatePositions}
       >
         {formState.isCalculating ? (
           <>
