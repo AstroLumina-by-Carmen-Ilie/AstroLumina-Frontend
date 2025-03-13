@@ -299,7 +299,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           id="birthCounty"
           options={options.stateOptions}
           value={options.stateOptions.find(option => option.value === formState.birthCounty) || null}
-          onChange={(option) => handleFormChange('birthCounty', option?.value || '')}
+          // onChange={(option) => handleFormChange('birthCounty', option?.value || '')}
           className="react-select-container"
           classNamePrefix="react-select"
           styles={{
