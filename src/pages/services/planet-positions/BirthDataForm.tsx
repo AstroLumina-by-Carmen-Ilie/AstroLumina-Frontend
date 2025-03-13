@@ -218,7 +218,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           id="fullName"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           value={formState.fullName}
-          // onChange={(e) => handleFormChange('fullName', e.target.value)}
+          onChange={(e) => handleFormChange('fullName', e.target.value)}
           required
         />
         {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
