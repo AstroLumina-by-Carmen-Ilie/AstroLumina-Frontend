@@ -228,7 +228,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         <label className="block text-gray-800 mb-2" htmlFor="birthDate">Birth Date</label>
         <Flatpickr
           value={formState.birthDate || ''}
-          // onChange={(date) => handleFormChange('birthDate', date[0])}
+          onChange={(date) => handleFormChange('birthDate', date[0])}
           options={{
             dateFormat: "d/m/Y",
             allowInput: true,
@@ -244,7 +244,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         <label className="block text-gray-800 mb-2" htmlFor="birthHour">Birth Hour</label>
         <Flatpickr
           value={formState.birthHour || ''}
-          // onChange={(date) => handleFormChange('birthHour', date[0])}
+          onChange={(date) => handleFormChange('birthHour', date[0])}
           options={{
             enableTime: true,
             noCalendar: true,
