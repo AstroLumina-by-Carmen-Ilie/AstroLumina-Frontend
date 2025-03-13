@@ -299,7 +299,8 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           id="birthCounty"
           options={options.stateOptions}
           value={options.stateOptions.find(option => option.value === formState.birthCounty) || null}
-          // onChange={(option) => handleFormChange('birthCounty', option?.value || '')}
+          // TODO problema la linia de jos pe iPhone
+          onChange={(option) => handleFormChange('birthCounty', option?.value || '')}
           className="react-select-container"
           classNamePrefix="react-select"
           styles={{
@@ -334,7 +335,8 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           id="birthCity"
           options={options.cityOptions}
           value={options.cityOptions.find(option => option.value === formState.birthCity) || null}
-          // onChange={(option) => handleFormChange('birthCity', option?.value || '')}
+          // TODO problema la linia de jos pe iPhone
+          onChange={(option) => handleFormChange('birthCity', option?.value || '')}
           className="react-select-container"
           classNamePrefix="react-select"
           styles={{
@@ -373,7 +375,8 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
         type="button"
         className="w-full py-3 px-6 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center"
         disabled={formState.isCalculating}
-        // onClick={handleCalculatePositions}
+        // TODO problema la linia de jos pe iPhone
+        onClick={handleCalculatePositions}
       >
         {formState.isCalculating ? (
           <>
