@@ -92,54 +92,53 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
     }
   }, [formState.birthCountry]);
 
-  // // Combined handler for county and city changes to reduce cascading effects
-  // const handleLocationChange = useCallback((field: string, value: string) => {
-  //   setFormState(prev => ({ ...prev, [field]: value }));
+  // Handle county change - load cities
+  useEffect(() => {
+    if (!formState.birthCounty || !formState.birthCountry) return;
+    
+    try {
+      const cities = City.getCitiesOfState(formState.birthCountry, formState.birthCounty).map(city => ({
+        value: city.name,
+        label: city.name
+      }));
 
-  //   // If changing county, load cities
-  //   if (field === 'birthCounty' && value) {
-  //     try {
-  //       const cities = City.getCitiesOfState(formState.birthCountry, value).map(city => ({
-  //         value: city.name,
-  //         label: city.name
-  //       }));
+      setOptions(prev => ({
+        ...prev,
+        cityOptions: [{ value: '', label: 'Select ...' }, ...cities]
+      }));
 
-  //       setOptions(prev => ({
-  //         ...prev,
-  //         cityOptions: [{ value: '', label: 'Select ...' }, ...cities]
-  //       }));
+      // Reset city when county changes
+      setFormState(prev => ({
+        ...prev,
+        birthCity: '',
+        coordinates: null
+      }));
+    } catch (error) {
+      console.error('Error loading cities:', error);
+    }
+  }, [formState.birthCounty, formState.birthCountry]);
 
-  //       // Reset city
-  //       setFormState(prev => ({
-  //         ...prev,
-  //         birthCity: '',
-  //         coordinates: null
-  //       }));
-  //     } catch (error) {
-  //       console.error('Error loading cities:', error);
-  //     }
-  //   }
+  // Handle city change - set coordinates
+  useEffect(() => {
+    if (!formState.birthCity || !formState.birthCounty || !formState.birthCountry) return;
+    
+    try {
+      const cityData = City.getCitiesOfState(formState.birthCountry, formState.birthCounty)
+        .find(city => city.name === formState.birthCity);
 
-  //   // If changing city, set coordinates
-  //   if (field === 'birthCity' && value) {
-  //     try {
-  //       const cityData = City.getCitiesOfState(formState.birthCountry, formState.birthCounty)
-  //         .find(city => city.name === value);
-
-  //       if (cityData) {
-  //         setFormState(prev => ({
-  //           ...prev,
-  //           coordinates: {
-  //             lat: Number(cityData.latitude),
-  //             lng: Number(cityData.longitude)
-  //           }
-  //         }));
-  //       }
-  //     } catch (error) {
-  //       console.error('Error setting coordinates:', error);
-  //     }
-  //   }
-  // }, [formState.birthCountry, formState.birthCounty]);
+      if (cityData) {
+        setFormState(prev => ({
+          ...prev,
+          coordinates: {
+            lat: Number(cityData.latitude),
+            lng: Number(cityData.longitude)
+          }
+        }));
+      }
+    } catch (error) {
+      console.error('Error setting coordinates:', error);
+    }
+  }, [formState.birthCity, formState.birthCounty, formState.birthCountry]);
 
   // Validate all inputs
   const validateInputs = () => {
@@ -300,7 +299,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           id="birthCounty"
           options={options.stateOptions}
           value={options.stateOptions.find(option => option.value === formState.birthCounty) || null}
-          // onChange={(option) => handleLocationChange('birthCounty', option?.value || '')}
+          onChange={(option) => handleFormChange('birthCounty', option?.value || '')}
           className="react-select-container"
           classNamePrefix="react-select"
           styles={{
@@ -335,7 +334,7 @@ const BirthDataForm: React.FC<BirthDataFormProps> = ({ setResult, setUserInfo })
           id="birthCity"
           options={options.cityOptions}
           value={options.cityOptions.find(option => option.value === formState.birthCity) || null}
-          // onChange={(option) => handleLocationChange('birthCity', option?.value || '')}
+          // onChange={(option) => handleFormChange('birthCity', option?.value || '')}
           className="react-select-container"
           classNamePrefix="react-select"
           styles={{
